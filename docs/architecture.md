@@ -1,7 +1,12 @@
 # Architecture
 
-AI UI AST is a TypeScript monorepo with two workspaces and a documentation
-layer.
+AI UI AST is **an LLM-oriented UI DSL with a deterministic compiler** — not a
+generic token-compression parser. The language is a small, AST-shaped DSL;
+the value is that a compiler (not the model) owns imports, JSX, bindings, and
+formatting. Token savings are a measured consequence of the small grammar,
+and `docs/token-methodology.md` is the receipt.
+
+It is a TypeScript monorepo with two workspaces and a documentation layer.
 
 ```text
 ai-ui-ast/

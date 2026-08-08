@@ -2,6 +2,11 @@
 
 Everything you need to understand, use, and extend AI UI AST.
 
+**What this is:** an LLM-oriented UI DSL with a deterministic compiler. An
+LLM writes a tiny, predictable `.aui` tree; the compiler turns it into
+readable React. Not a token-compression parser — token savings are a
+measured consequence of the design.
+
 ## For users
 
 | Doc | What it covers |

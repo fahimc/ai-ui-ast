@@ -1,7 +1,7 @@
 {
   "name": "@codedia/parser",
-  "version": "0.1.0",
-  "description": "LLM-first UI language: parse .aui source into a canonical UI AST and compile it deterministically to React. AST-shaped, token-efficient, and safe by construction.",
+  "version": "0.1.1",
+  "description": "An LLM-oriented UI DSL with a deterministic compiler: express screens in .aui, get canonical ASTs and readable React/TSX. Small grammar, safe by construction, measured token savings.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

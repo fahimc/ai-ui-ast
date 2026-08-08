@@ -1,8 +1,10 @@
 # @codedia/parser
 
-**The AI UI AST language, in one package.** Parse `.aui` — an LLM-first UI
-language that expresses the UI tree directly — into a canonical AST, then
-compile it deterministically to React + TypeScript.
+**An LLM-oriented UI DSL with a deterministic compiler, in one package.**
+Express screens in `.aui` — a small DSL that is the UI tree itself — then
+parse it into a canonical AST and compile it deterministically to React +
+TypeScript. This is a DSL plus a compiler, not a token-compression trick:
+the token savings are a *measured consequence* of the small grammar.
 
 ```
 npm install @codedia/parser
@@ -18,8 +20,9 @@ npm install @codedia/parser
 
 Ask an LLM to build a screen and it emits React + JSX + imports + className
 strings + CSS — a large, error-prone surface. `.aui` is the opposite: the
-source **is** the UI tree, expressed in a small, predictable grammar that an
-LLM can generate reliably and with fewer tokens.
+source **is** the UI tree, expressed in a small, predictable DSL. The
+compiler — not the model — owns every decision an LLM is bad at: imports,
+JSX syntax, binding resolution, and output formatting.
 
 ```aui
 Card max=md pad=lg

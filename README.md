@@ -1,8 +1,14 @@
 # AI UI AST
 
-**An LLM-first UI language that expresses the UI AST directly** — then compiles
-deterministically to React. Small grammar, few tokens, no invented imports or
-CSS, and output you can read and test.
+**An LLM-oriented UI DSL with a deterministic compiler.** Express screens in
+`.aui` — a small DSL that *is* the UI tree — and a compiler turns it into
+readable, testable React. Small grammar, no invented imports or CSS.
+
+This is a DSL plus a compiler, not a generic token-compression parser. The
+point is that an LLM writes a tiny, predictable tree instead of framework
+boilerplate; the compiler absorbs the messy parts deterministically. The
+token savings are real — and measured, not claimed — but they are a
+consequence of the design, not the identity.
 
 > **Try the live playground: <https://ai-ui-ast.netlify.app>**
 >

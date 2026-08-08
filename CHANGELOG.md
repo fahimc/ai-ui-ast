@@ -4,6 +4,20 @@ All notable changes to AI UI AST are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and this project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] — 2026-08-08
+
+### Changed — positioning
+
+- **Repositioned as an LLM-oriented UI DSL with a deterministic compiler** —
+  not a generic token-compression parser. Updated the npm package description,
+  package README, root README, docs index, architecture doc, and the site
+  hero to lead with the DSL + compiler story; token savings are presented as
+  a measured consequence of the design, not the identity.
+- **Fixed a claim that contradicted our own measurements**: the site hero
+  stat said "~3× fewer tokens than TSX"; the token report measures **1.9×**
+  (48% fewer). Now says "~2× — measured, not claimed".
+- Rebuilt and redeployed the site; published `@codedia/parser@0.1.1`.
+
 ## [0.1.0] — 2026-08-08
 
 Initial public release. The `.aui` language, parser, React compiler, token
@@ -81,4 +95,5 @@ methodology, and full website.
   repo public at `github.com/fahimc/ai-ui-ast`; site live at
   `ai-ui-ast.netlify.app`.
 
+[0.1.1]: https://github.com/fahimc/ai-ui-ast/releases/tag/v0.1.1
 [0.1.0]: https://github.com/fahimc/ai-ui-ast/releases/tag/v0.1.0

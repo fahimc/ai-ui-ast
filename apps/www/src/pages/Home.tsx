@@ -53,16 +53,16 @@ export function Home({ onNavigate }: { onNavigate: (route: 'playground' | 'langu
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <header className="hero">
         <div className="hero-inner">
-          <span className="eyebrow">An LLM-first UI language</span>
+          <span className="eyebrow">An LLM-oriented UI DSL</span>
           <h1>
             Write the UI tree.
             <br />
-            <span className="grad">Not the framework.</span>
+            <span className="grad">A compiler ships the framework.</span>
           </h1>
           <p className="hero-lead">
-            AI UI AST is a language that expresses the UI Abstract Syntax Tree directly — then compiles it
-            deterministically to React. It removes framework boilerplate, dependency decisions, arbitrary CSS, and most
-            syntax from the representation an AI has to generate.
+            AI UI AST is a small DSL that expresses the UI tree directly — and a deterministic compiler that turns it
+            into readable React. The model writes the tree; the compiler owns imports, bindings, and formatting. Not a
+            token-compression trick: savings are a measured consequence of the design.
           </p>
           <div className="hero-ctas">
             <button type="button" className="btn btn-primary btn-lg" onClick={() => onNavigate('playground')}>
@@ -74,8 +74,8 @@ export function Home({ onNavigate }: { onNavigate: (route: 'playground' | 'langu
           </div>
           <div className="hero-stats">
             <div className="stat">
-              <strong>~3×</strong>
-              <span>fewer output tokens than TSX</span>
+              <strong>~2×</strong>
+              <span>fewer tokens than React — measured, not claimed</span>
             </div>
             <div className="stat">
               <strong>0</strong>
