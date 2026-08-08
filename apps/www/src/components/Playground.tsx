@@ -11,6 +11,9 @@ type Tab = 'preview' | 'ast' | 'react';
 interface PlaygroundProps {
   sampleId: string;
   onSampleChange: (id: string) => void;
+  /** When set, the editor starts from this custom snippet instead of a sample. */
+  customCode?: string | null;
+  onClearCustom?: () => void;
 }
 
 function countNodes(doc: { rootNodes: { children: unknown[] }[] }): number {
@@ -25,16 +28,21 @@ function countNodes(doc: { rootNodes: { children: unknown[] }[] }): number {
   return n;
 }
 
-export function Playground({ sampleId, onSampleChange }: PlaygroundProps) {
+export function Playground({ sampleId, onSampleChange, customCode, onClearCustom }: PlaygroundProps) {
   const [code, setCode] = useState(() => SAMPLES.find((s) => s.id === sampleId)?.code ?? SAMPLES[0].code);
   const [tab, setTab] = useState<Tab>('preview');
   const gutterRef = useRef<HTMLDivElement>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    const sample = SAMPLES.find((s) => s.id === sampleId);
-    if (sample) setCode(sample.code);
-  }, [sampleId]);
+    if (customCode !== null && customCode !== undefined) {
+      setCode(customCode);
+      setTab('preview');
+    } else {
+      const sample = SAMPLES.find((s) => s.id === sampleId);
+      if (sample) setCode(sample.code);
+    }
+  }, [customCode, sampleId]);
 
   const { doc, diags, react, astJson, error, nodeCount } = useMemo(() => {
     try {
@@ -77,8 +85,14 @@ export function Playground({ sampleId, onSampleChange }: PlaygroundProps) {
   };
 
   const reset = () => {
-    const sample = SAMPLES.find((s) => s.id === sampleId) ?? SAMPLES[0];
-    setCode(sample.code);
+    if (customCode !== null && customCode !== undefined) {
+      onClearCustom?.();
+      const sample = SAMPLES.find((s) => s.id === sampleId) ?? SAMPLES[0];
+      setCode(sample.code);
+    } else {
+      const sample = SAMPLES.find((s) => s.id === sampleId) ?? SAMPLES[0];
+      setCode(sample.code);
+    }
   };
 
   const tabLabel = (t: Tab): string => {
@@ -91,7 +105,10 @@ export function Playground({ sampleId, onSampleChange }: PlaygroundProps) {
       <div className="playground-toolbar">
         <label className="playground-sample">
           <span>Example</span>
-          <select value={sampleId} onChange={(e) => loadSample(e.target.value)}>
+          <select value={customCode ? '__custom' : sampleId} onChange={(e) => loadSample(e.target.value)}>
+            {customCode && (
+              <option value="__custom">Custom snippet</option>
+            )}
             {SAMPLES.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.label}
@@ -157,7 +174,7 @@ export function Playground({ sampleId, onSampleChange }: PlaygroundProps) {
           <div className="playground-output">
             {tab === 'preview' && (
               <div className="preview-canvas">
-                <AuiPreview nodes={doc.rootNodes} />
+                <AuiPreview nodes={doc.rootNodes} defs={doc.components} imports={doc.imports} />
                 <div className="preview-note">
                   Live preview — bindings resolve against built-in mock data; components come from the v0 design-system registry.
                 </div>

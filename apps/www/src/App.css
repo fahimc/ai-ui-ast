@@ -721,6 +721,58 @@
   gap: 6px;
 }
 
+/* def template usage renders inline with no wrapper */
+.aui-def-use {
+  display: contents;
+}
+
+/* imported third-party component placeholder */
+.aui-external {
+  border: 1px dashed #b9aee0;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f7f4ff, #f0ebfd);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.aui-external-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.aui-external-name {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #5b21b6;
+}
+
+.aui-external-tag {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+
+.aui-external-text {
+  font-size: 12.5px;
+  color: #6b6577;
+}
+
+.aui-external-chart {
+  align-self: flex-start;
+  max-width: 100%;
+}
+
 .aui-unknown-missing {
   outline-color: var(--tone-error);
 }
