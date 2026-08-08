@@ -1,4 +1,4 @@
-import { tokenize, type Token } from '@ai-ui-ast/parser';
+import { tokenize, type Token } from '@codedia/parser';
 import { nodeSpec } from './registry';
 
 export interface Diagnostic {

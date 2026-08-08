@@ -1,13 +1,19 @@
-import type { ComponentDef, Document, Node } from '@ai-ui-ast/parser';
+import type { ComponentDef, Document, Node } from './ast.ts';
+import { tokenizeText } from './text.ts';
 
 /**
  * Deterministically compile a parsed .aui Document into readable React + TSX.
  * The output is what a registry adapter would produce: semantic components,
  * token props, bindings resolved against a `data` prop, and named actions
  * routed through an `onAction` callback.
+ *
+ * The compiler is pure: the same source always produces the same output, and
+ * the output imports semantic components from a design-system adapter
+ * (`@/components/ui`) rather than inventing imports or CSS.
  */
 
 export interface CompileOptions {
+  /** Name for the generated React component. Defaults to the Page label. */
   componentName?: string;
 }
 
@@ -45,11 +51,23 @@ function renderPropValue(value: string, ctx: Ctx): string {
   return `"${esc(value)}"`;
 }
 
+/** Render text content: bindings become JSX expressions, the rest stays literal. */
+function renderTextContent(text: string, ctx: Ctx): string {
+  return tokenizeText(text)
+    .map((seg) =>
+      seg.kind === 'binding'
+        ? `{${bindingToTsx('$' + seg.value, ctx)}}`
+        : /[{}]/.test(seg.value)
+          ? `{"${esc(seg.value)}"}`
+          : seg.value,
+    )
+    .join('');
+}
+
 function renderChildren(node: Node, ctx: Ctx): string {
   const lines: string[] = [];
   if (node.textContent !== undefined) {
-    const t = node.textContent;
-    lines.push(t.startsWith('$') ? `{${bindingToTsx(t, ctx)}}` : t);
+    lines.push(renderTextContent(node.textContent, ctx));
   }
   for (const child of node.children) {
     if (child.type !== 'Else') lines.push(renderNode(child, ctx));
@@ -119,6 +137,11 @@ function renderNode(node: Node, ctx: Ctx): string {
   }
 
   if (childrenText) {
+    // Text-only children (no nested elements) stay on one line, matching how
+    // hand-written React reads: <Heading level={1}>Projects</Heading>.
+    if (!childrenText.includes('\n')) {
+      return `<${node.type}${props.length ? ' ' + props.join(' ') : ''}>${childrenText}</${node.type}>`;
+    }
     return `<${node.type}${props.length ? ' ' + props.join(' ') : ''}>\n${indentLines(childrenText, '  ')}\n</${node.type}>`;
   }
   return `<${node.type}${props.length ? ' ' + props.join(' ') : ''} />`;
@@ -187,9 +210,7 @@ export function compileReact(doc: Document, opts: CompileOptions = {}): string {
   const coreImports = [...used].filter((n) => !importedNames.has(n)).sort();
   const header: string[] = [];
   if (coreImports.length > 0) {
-    header.push(`import {`);
-    header.push(`  ${coreImports.join(',\n  ')}`);
-    header.push(`} from '@/components/ui'`);
+    header.push(`import { ${coreImports.join(', ')} } from '@/components/ui'`);
   }
   for (const line of importLines) header.push(line);
 

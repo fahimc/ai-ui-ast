@@ -7,10 +7,12 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test --experimental-strip-types src/lib/render.test.ts",
+    "validate:tokens": "node --experimental-strip-types scripts/validate-tokens.ts"
   },
   "dependencies": {
-    "@ai-ui-ast/parser": "^0.1.0",
+    "@codedia/parser": "^0.1.0",
     "gpt-tokenizer": "^3.4.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"

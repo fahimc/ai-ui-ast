@@ -1189,6 +1189,10 @@ code {
   background: linear-gradient(90deg, #3a3550, #575170);
 }
 
+.token-bar-fill.generated {
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+}
+
 .token-count {
   font-family: var(--mono);
   font-size: 12.5px;
@@ -1231,6 +1235,114 @@ code {
   color: var(--muted);
   font-size: 15px;
   max-width: 760px;
+}
+
+/* ── Methodology ──────────────────────────────────────────────────────────── */
+.method-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: method;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.method-list li {
+  position: relative;
+  padding-left: 34px;
+  color: var(--muted);
+  font-size: 14.5px;
+  line-height: 1.6;
+  max-width: 780px;
+}
+
+.method-list li::before {
+  counter-increment: method;
+  content: counter(method);
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color: #0b0b10;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.method-list code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 6px;
+}
+
+.method-table-wrap {
+  margin-top: 20px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.method-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  min-width: 640px;
+}
+
+.method-table th,
+.method-table td {
+  text-align: right;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.method-table th:first-child,
+.method-table td:first-child {
+  text-align: left;
+}
+
+.method-table th {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.method-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.method-table tfoot td {
+  font-weight: 700;
+  color: var(--ink);
+  border-bottom: none;
+  border-top: 2px solid var(--border);
+  background: var(--bg-soft);
+}
+
+.method-table tbody td:nth-child(2),
+.method-table tfoot td:nth-child(2) {
+  color: var(--accent);
+  font-family: var(--mono);
+}
+
+.method-foot {
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
 }
 
 /* ── Roadmap: shipped ────────────────────────────────────────────────────── */

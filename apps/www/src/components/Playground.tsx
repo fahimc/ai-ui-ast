@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { parse } from '@ai-ui-ast/parser';
+import { parse } from '@codedia/parser';
 import { SAMPLES } from '../lib/samples';
 import { validate, type Diagnostic } from '../lib/validate';
-import { compileReact } from '../lib/compileReact';
+import { compileReact } from '@codedia/parser';
 import { AuiPreview } from '../lib/preview';
 import { CodeBlock } from './CodeBlock';
 

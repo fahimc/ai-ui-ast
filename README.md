@@ -1,26 +1,25 @@
 # AI UI AST
 
-Working project area for an **LLM-first UI language that expresses the UI AST directly**, then compiles deterministically to React.
+**An LLM-first UI language that expresses the UI AST directly** — then compiles
+deterministically to React. Small grammar, few tokens, no invented imports or
+CSS, and output you can read and test.
 
-The core idea is deliberately *not* to replace React. React remains the mature runtime/target. The new language removes framework boilerplate, dependency decisions, arbitrary CSS, and most syntax from the representation an AI has to generate.
+> **Try the live playground: <https://ai-ui-ast.netlify.app>**
+>
+> **npm: [`@codedia/parser`](https://www.npmjs.com/package/@codedia/parser)**
+> · **GitHub: [`fahimc/ai-ui-ast`](https://github.com/fahimc/ai-ui-ast)**
 
-## Thesis
+[![npm version](https://img.shields.io/npm/v/@codedia/parser)](https://www.npmjs.com/package/@codedia/parser)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Website](https://img.shields.io/badge/website-playground-blueviolet)](https://ai-ui-ast.netlify.app)
 
-Instead of asking an LLM to produce this:
+---
 
-```tsx
-<Card className="w-full max-w-md">
-  <CardContent className="flex flex-col gap-4 p-6">
-    <h2 className="text-xl font-semibold">Welcome back</h2>
-    <p className="text-sm text-muted-foreground">
-      Continue where you left off.
-    </p>
-    <Button variant="primary" onClick={continueFlow}>Continue</Button>
-  </CardContent>
-</Card>
-```
+## The idea
 
-it should be able to emit something closer to the UI tree itself:
+Ask an LLM to build a screen and it produces React + JSX + imports +
+`className` strings + CSS — a huge, error-prone surface. Instead of asking it
+to emit all of that, `.aui` asks for the **UI tree itself**:
 
 ```aui
 Card max=md pad=lg
@@ -30,22 +29,76 @@ Card max=md pad=lg
     Button variant=primary action=continue "Continue"
 ```
 
-The compiler owns imports, React syntax, token resolution, component lookup, accessibility defaults, responsive behaviour, and output formatting.
+The compiler owns imports, JSX syntax, token resolution, component lookup,
+accessibility defaults, and output formatting. The language removes framework
+boilerplate, dependency decisions, arbitrary CSS, and most syntax from the
+representation an AI has to generate.
+
+React is deliberately **not** replaced — it stays the mature runtime and
+compiler target. `.aui` is the input format; React is the output.
+
+## What's in this repo
+
+| Path | What |
+|---|---|
+| `packages/parser` | **`@codedia/parser`** — lexer, parser, AST, React compiler, text/binding resolution. Zero runtime deps, ESM. |
+| `apps/www` | The public website: docs, language reference, examples gallery, and an interactive playground (preview / AST / React tabs, diagnostics). |
+| `docs/` | Full documentation: [API](docs/api.md), [grammar](docs/grammar.md), [compiler](docs/compiler.md), [token methodology](docs/token-methodology.md), [architecture](docs/architecture.md). |
+| `skills/write-aui-ui` | An agent skill that teaches coding agents to write `.aui` and use the module. |
+| `LANGUAGE_SPEC_V0.md` | The original v0 language specification. |
+| `BUILD_PLAN.md` | Phased implementation plan and acceptance criteria. |
+
+## Quickstart
+
+```bash
+npm install @codedia/parser
+```
+
+```ts
+import { parse, compileReact } from '@codedia/parser';
+
+const doc = parse(`
+Page Dashboard data=$metrics
+  Stack gap=md
+    Heading level=1 "Overview"
+    Metric label="Active users" value=$metrics.active
+`);
+
+console.log(doc.rootNodes[0].type);   // 'Page'
+const tsx = compileReact(doc);        // deterministic React + TSX
+```
+
+Full API and grammar: [`packages/parser/README.md`](packages/parser/README.md)
+and [`docs/`](docs/).
 
 ## Design goals
 
 1. **LLM-first syntax** — small output surface, low token count, predictable grammar.
-2. **AST-shaped** — the source maps almost 1:1 to the internal tree; parsing should be trivial and deterministic.
-3. **Design-system native** — components and tokens come from a registry rather than model-invented imports/CSS.
+2. **AST-shaped** — the source maps almost 1:1 to the internal tree; parsing is trivial and deterministic.
+3. **Design-system native** — components and tokens come from a registry, not model-invented imports/CSS.
 4. **Safe by construction** — no arbitrary JavaScript, CSS, package imports, or executable expressions in the core language.
-5. **Strong validation** — invalid components, props, token values, data bindings, actions, and nesting fail before React generation.
+5. **Strong validation** — invalid components, props, tokens, bindings, and actions fail before React generation.
 6. **Accessible defaults** — semantic nodes and component contracts carry accessibility behaviour.
-7. **Framework-separated** — React is the first compiler backend, not part of the language grammar.
-8. **Escape hatches later** — start constrained; add extension mechanisms only after the core model is stable.
-9. **Round-trip friendly** — source -> AST -> canonical source should be deterministic.
-10. **Measurably better for AI** — benchmark validity, token use, repair iterations, component reuse, and visual fidelity against TSX.
+7. **Framework-separated** — React is the first compiler backend, not part of the grammar.
+8. **Round-trip friendly** — source → AST → canonical source is deterministic.
+9. **Measurably better for AI** — token use, validity, and repair iterations are benchmarked against TSX.
 
-## Proposed pipeline
+## Token efficiency (why it matters)
+
+The Examples gallery measures every scenario with the **real GPT-4 tokenizer**
+(`cl100k_base`), comparing `.aui` against the generated React *and* hand-written
+React implementations of the same screens:
+
+> **Six real screens — 1,080 tokens saved, 48% fewer, 1.9× smaller than
+> hand-written React.** The tool's generated React is smaller than hand-written
+> code in every scenario.
+
+Every number is reproducible via `npm run validate:tokens` (in `apps/www`),
+which re-counts the corpus and rewrites `token-report.json`. See
+[docs/token-methodology.md](docs/token-methodology.md) and the live
+[Examples page](https://ai-ui-ast.netlify.app/#/examples).
+
+## The pipeline
 
 ```text
 Prompt / Figma / agent
@@ -77,80 +130,51 @@ Prompt / Figma / agent
  React + TypeScript
 ```
 
-## v0 scope
-
-The first version should prove only five things:
-
-- an LLM can generate the language more reliably and with fewer tokens than TSX;
-- the language can represent useful application screens, not just static cards;
-- a registry can map semantic UI nodes to real React design-system components;
-- invalid UI can be rejected with repairable diagnostics before code generation;
-- generated React can be tested and rendered exactly like hand-written React.
-
-Do **not** attempt to build a universal frontend language in v0.
-
-## Initial language surface
-
-The core should begin with:
-
-- **structure:** `Page`, `Stack`, `Row`, `Grid`, `Card`, `Section`, `Spacer`
-- **content:** `Heading`, `Text`, `Image`, `Icon`, `Divider`
-- **controls:** `Button`, `Link`, `Input`, `Select`, `Checkbox`, `Switch`
-- **feedback:** `Alert`, `Badge`, `Spinner`
-- **state/data:** `$binding`, `State`, `If`, `For`
-- **actions:** named `action=` references only
-- **tokens:** semantic values such as `gap=md`, `tone=muted`, `variant=primary`
-
-No arbitrary `style`, `className`, `import`, `eval`, inline JavaScript, or raw CSS in the core language.
-
-## Example
-
-```aui
-Page CustomerDetail data=$customer
-  Header
-    Row gap=md align=center
-      Avatar src=$customer.avatar label=$customer.name
-      Stack gap=xs
-        Heading level=1 $customer.name
-        Badge tone=success $customer.status
-
-  Grid min=280 gap=lg
-    Card pad=lg
-      Heading level=2 "Account"
-      Field label="Email" value=$customer.email
-      Field label="Plan" value=$customer.plan
-
-    Card pad=lg
-      Heading level=2 "Usage"
-      Metric label="Projects" value=$customer.projects
-      Metric label="Storage" value=$customer.storage
-
-  Row justify=end gap=sm
-    Button variant=secondary action=cancel "Cancel"
-    Button variant=primary action=save "Save"
-```
-
-## Website
-
-[`apps/www`](./apps/www) is the project's public site: an explainer with the full
-language reference, examples, roadmap — and an interactive **playground** that
-parses `.aui` live and shows a rendered preview, the canonical AST, the generated
-React/TSX, and registry diagnostics as you type.
+## Development
 
 ```bash
-npm install        # installs workspaces and builds @ai-ui-ast/parser
-npm run dev -w www # open the site in the browser
+git clone https://github.com/fahimc/ai-ui-ast.git
+cd ai-ui-ast
+npm install                # installs workspaces, builds @codedia/parser
+npm test -w @codedia/parser   # 19 unit tests (parser, compiler, text resolution)
+npm test -w www            # 3 rendering regression tests (every sample + gallery scenario)
+npm run validate:tokens -w www   # re-measure token savings; --check verifies the committed report
+npm run dev -w www         # the playground, http://localhost:5173
 ```
 
-## Repository direction
+## Repository layout
 
-This folder starts as specification and planning only. The intended implementation is a TypeScript monorepo so the parser, AST, validators, React compiler, CLI, registry adapters, and browser playground can evolve independently.
+```text
+ai-ui-ast/
+├── packages/parser/       # the published npm module (@codedia/parser)
+│   └── src/
+│       ├── lexer.ts       # tokenizer
+│       ├── parser.ts      # indentation-based parser → Document
+│       ├── ast.ts         # types: Node, Prop, ImportDecl, ComponentDef, Document
+│       ├── text.ts        # $binding tokenization + resolution helpers
+│       └── react.ts       # compileReact: Document → React + TSX
+├── apps/www/              # the website (Vite + React)
+│   ├── src/pages/         # Home, Language, Examples, Playground, Roadmap
+│   ├── src/lib/           # registry, mock data, resolution, gallery, handwritten corpus
+│   └── scripts/           # validate-tokens.ts (token methodology checker)
+├── docs/                  # API, grammar, compiler, token methodology, architecture
+├── skills/write-aui-ui/   # agent skill (SKILL.md)
+├── LANGUAGE_SPEC_V0.md
+├── BUILD_PLAN.md
+└── LICENSE                # MIT
+```
 
-See:
+## Documentation
 
-- [`BUILD_PLAN.md`](./BUILD_PLAN.md) — phased implementation and acceptance criteria.
-- [`LANGUAGE_SPEC_V0.md`](./LANGUAGE_SPEC_V0.md) — proposed v0 grammar and AST contract.
+- [docs/README.md](docs/README.md) — documentation index
+- [docs/api.md](docs/api.md) — full API reference
+- [docs/grammar.md](docs/grammar.md) — the current grammar
+- [docs/compiler.md](docs/compiler.md) — how React generation works
+- [docs/token-methodology.md](docs/token-methodology.md) — how we measure token savings
+- [docs/architecture.md](docs/architecture.md) — monorepo architecture
+- [CHANGELOG.md](CHANGELOG.md) — release history
+- [CONTRIBUTING.md](CONTRIBUTING.md) — how to contribute
 
-## Success definition
+## License
 
-The project is successful when the same UI task can be given to an LLM and the `.aui` route consistently requires materially fewer output tokens and fewer repair attempts than React/TSX, while producing design-system-compliant, accessible React that passes the same automated tests.
+MIT © Fahim Chowdhury. See [LICENSE](LICENSE).

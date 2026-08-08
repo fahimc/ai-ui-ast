@@ -1,37 +1,49 @@
-import { useEffect, useMemo, useState } from 'react';
-import { parse } from '@ai-ui-ast/parser';
+import { useMemo } from 'react';
+import { parse } from '@codedia/parser';
 import { CodeBlock } from '../components/CodeBlock';
 import { Section } from '../components/Section';
 import { GALLERY, type GalleryScenario } from '../lib/gallery';
-import { compileReact } from '../lib/compileReact';
-import type { TokenComparison } from '../lib/tokens';
+import { compileReact } from '@codedia/parser';
+import report from '../../token-report.json';
 
-interface ScenarioAnalysis {
-  scenario: GalleryScenario;
-  react: string;
-  auiLines: number;
-  reactLines: number;
+/**
+ * The token numbers on this page come from `token-report.json`, written by
+ * `scripts/validate-tokens.ts` (`npm run validate:tokens`). The script parses
+ * every scenario, compiles it to React, counts `.aui`, generated, and
+ * hand-written React with the real GPT-4 tokenizer, and rewrites this report.
+ */
+
+interface ReportScenario {
+  id: string;
+  title: string;
+  aui: number;
+  generated: number;
+  handwritten: number;
 }
 
-function analyze(scenario: GalleryScenario): ScenarioAnalysis {
-  const doc = parse(scenario.auiCode);
-  const react = compileReact(doc);
-  return {
-    scenario,
-    react,
-    auiLines: scenario.auiCode.trim().split('\n').length,
-    reactLines: react.trim().split('\n').length,
-  };
+interface TokenReport {
+  tokenizer: string;
+  note: string;
+  scenarios: ReportScenario[];
+  totals: { aui: number; generated: number; handwritten: number };
 }
 
-/** Local formatting helper so the tokenizer stays out of the main bundle. */
+const TOKEN_REPORT = report as TokenReport;
+
+const byScenarioId: Record<string, ReportScenario> = Object.fromEntries(
+  TOKEN_REPORT.scenarios.map((s) => [s.id, s]),
+);
+
 function formatTokens(n: number): string {
   return n.toLocaleString('en-US');
 }
 
-function TokenBar({ comparison }: { comparison: TokenComparison }) {
-  const { aui, react, saved, ratio, reductionPct } = comparison;
-  const auiPct = Math.max(6, (aui / react) * 100);
+function TokenBar({ scenario }: { scenario: ReportScenario }) {
+  const { aui, generated, handwritten } = scenario;
+  const saved = handwritten - aui;
+  const ratio = handwritten / aui;
+  const reductionPct = (1 - aui / handwritten) * 100;
+  const width = (n: number) => Math.max(6, (n / handwritten) * 100);
   return (
     <div className="token-compare">
       <div className="token-compare-head">
@@ -41,27 +53,52 @@ function TokenBar({ comparison }: { comparison: TokenComparison }) {
       <div className="token-row">
         <span className="token-label">.aui</span>
         <div className="token-bar">
-          <div className="token-bar-fill aui" style={{ width: `${auiPct}%` }} />
+          <div className="token-bar-fill aui" style={{ width: `${width(aui)}%` }} />
         </div>
         <span className="token-count">{formatTokens(aui)}</span>
       </div>
       <div className="token-row">
-        <span className="token-label">React</span>
+        <span className="token-label">Generated</span>
+        <div className="token-bar">
+          <div className="token-bar-fill generated" style={{ width: `${width(generated)}%` }} />
+        </div>
+        <span className="token-count">{formatTokens(generated)}</span>
+      </div>
+      <div className="token-row">
+        <span className="token-label">Hand-written</span>
         <div className="token-bar">
           <div className="token-bar-fill react" style={{ width: '100%' }} />
         </div>
-        <span className="token-count">{formatTokens(react)}</span>
+        <span className="token-count">{formatTokens(handwritten)}</span>
       </div>
       <div className="token-compare-foot">
-        Saves <strong>{formatTokens(saved)} tokens</strong> · {ratio.toFixed(1)}× smaller — measured with the real
-        GPT-4 tokenizer.
+        Saves <strong>{formatTokens(saved)} tokens</strong> vs hand-written React · {ratio.toFixed(1)}× smaller —
+        measured with the real GPT-4 tokenizer.
       </div>
     </div>
   );
 }
 
-function ScenarioCard({ analysis, tokens, onOpen }: { analysis: ScenarioAnalysis; tokens?: TokenComparison; onOpen: (code: string) => void }) {
+interface ScenarioAnalysis {
+  scenario: GalleryScenario;
+  react: string;
+  auiLines: number;
+  reactLines: number;
+}
+
+function analyze(scenario: GalleryScenario): ScenarioAnalysis {
+  const react = compileReact(parse(scenario.auiCode));
+  return {
+    scenario,
+    react,
+    auiLines: scenario.auiCode.trim().split('\n').length,
+    reactLines: react.trim().split('\n').length,
+  };
+}
+
+function ScenarioCard({ analysis, onOpen }: { analysis: ScenarioAnalysis; onOpen: (code: string) => void }) {
   const { scenario, react } = analysis;
+  const tokens = byScenarioId[scenario.id];
   return (
     <article className="gallery-card">
       <div className="gallery-head">
@@ -86,40 +123,56 @@ function ScenarioCard({ analysis, tokens, onOpen }: { analysis: ScenarioAnalysis
         <CodeBlock code={react} lang="tsx" label={`generated.tsx · ${analysis.reactLines} lines`} maxHeight={420} />
       </div>
 
-      {tokens ? (
-        <TokenBar comparison={tokens} />
-      ) : (
-        <div className="token-compare token-compare-pending">Measuring tokens with the GPT-4 tokenizer…</div>
-      )}
+      {tokens ? <TokenBar scenario={tokens} /> : null}
     </article>
+  );
+}
+
+function MethodTable() {
+  return (
+    <div className="method-table-wrap">
+      <table className="method-table">
+        <thead>
+          <tr>
+            <th>Scenario</th>
+            <th>.aui</th>
+            <th>Generated</th>
+            <th>Hand-written</th>
+            <th>Saved vs hand-written</th>
+            <th>React is larger</th>
+          </tr>
+        </thead>
+        <tbody>
+          {TOKEN_REPORT.scenarios.map((s) => (
+            <tr key={s.id}>
+              <td>{s.title}</td>
+              <td>{formatTokens(s.aui)}</td>
+              <td>{formatTokens(s.generated)}</td>
+              <td>{formatTokens(s.handwritten)}</td>
+              <td>{formatTokens(s.handwritten - s.aui)}</td>
+              <td>{(s.handwritten / s.aui).toFixed(1)}×</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>Total</td>
+            <td>{formatTokens(TOKEN_REPORT.totals.aui)}</td>
+            <td>{formatTokens(TOKEN_REPORT.totals.generated)}</td>
+            <td>{formatTokens(TOKEN_REPORT.totals.handwritten)}</td>
+            <td>{formatTokens(TOKEN_REPORT.totals.handwritten - TOKEN_REPORT.totals.aui)}</td>
+            <td>{(TOKEN_REPORT.totals.handwritten / TOKEN_REPORT.totals.aui).toFixed(1)}×</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
   );
 }
 
 export function Examples({ onOpenInPlayground }: { onOpenInPlayground: (code: string) => void }) {
   const analyses = useMemo(() => GALLERY.map(analyze), []);
-  const [tokenMap, setTokenMap] = useState<Record<string, TokenComparison> | null>(null);
-
-  // The tokenizer vocab is a few MB — lazy-load it so the main bundle stays lean.
-  useEffect(() => {
-    let alive = true;
-    import('../lib/tokens').then(({ compareTokens }) => {
-      if (!alive) return;
-      const map: Record<string, TokenComparison> = {};
-      for (const a of analyses) map[a.scenario.id] = compareTokens(a.scenario.auiCode, a.react);
-      setTokenMap(map);
-    });
-    return () => {
-      alive = false;
-    };
-  }, [analyses]);
-
-  const totals = useMemo(() => {
-    const values = Object.values(tokenMap ?? {});
-    if (values.length === 0) return null;
-    const aui = values.reduce((acc, t) => acc + t.aui, 0);
-    const react = values.reduce((acc, t) => acc + t.react, 0);
-    return { aui, react, saved: react - aui, ratio: react / aui };
-  }, [tokenMap]);
+  const totals = TOKEN_REPORT.totals;
+  const saved = totals.handwritten - totals.aui;
 
   return (
     <Section
@@ -130,12 +183,12 @@ export function Examples({ onOpenInPlayground }: { onOpenInPlayground: (code: st
     >
       <div className="gallery-summary">
         <div className="gallery-summary-stat">
-          <strong>{totals ? totals.saved.toLocaleString('en-US') : '…'}</strong>
-          <span>tokens saved across these six screens</span>
+          <strong>{saved.toLocaleString('en-US')}</strong>
+          <span>tokens saved across these six screens (vs hand-written React)</span>
         </div>
         <div className="gallery-summary-stat">
-          <strong>{totals ? totals.ratio.toFixed(1) + '×' : '…'}</strong>
-          <span>React is larger than .aui on average</span>
+          <strong>{(totals.handwritten / totals.aui).toFixed(1)}×</strong>
+          <span>hand-written React is larger than .aui on average</span>
         </div>
         <div className="gallery-summary-stat">
           <strong>6 / 6</strong>
@@ -145,17 +198,65 @@ export function Examples({ onOpenInPlayground }: { onOpenInPlayground: (code: st
 
       <div className="gallery-list">
         {analyses.map((a) => (
-          <ScenarioCard key={a.scenario.id} analysis={a} tokens={tokenMap?.[a.scenario.id]} onOpen={onOpenInPlayground} />
+          <ScenarioCard key={a.scenario.id} analysis={a} onOpen={onOpenInPlayground} />
         ))}
+      </div>
+
+      <div className="gallery-note">
+        <h3>How we measure tokens</h3>
+        <ol className="method-list">
+          <li>
+            <strong>Tokenizer.</strong> Every count uses <code>gpt-tokenizer</code> — the real GPT-4 / GPT-3.5 BPE
+            tokenizer (cl100k_base), the same one OpenAI's API uses. Every character counts: imports, whitespace,
+            JSX punctuation. Nothing is minified or abbreviated.
+          </li>
+          <li>
+            <strong>The .aui side</strong> is the exact <code>screen.aui</code> source shown in each card — what an
+            LLM would emit to express the screen.
+          </li>
+          <li>
+            <strong>The React side has two numbers.</strong> <em>Generated</em> is the deterministic output of the
+            compiler running on the same parsed AST (the <code>generated.tsx</code> in each card).{' '}
+            <em>Hand-written</em> is a realistic React implementation of the same screen — imports, handlers, local
+            components — authored by hand for validation and committed in{' '}
+            <code>src/lib/handwritten.ts</code>. The headline savings compare .aui against hand-written React,
+            because that is what a developer would actually ship; the tool's generated output is already comparable
+            or smaller.
+          </li>
+          <li>
+            <strong>Fairness.</strong> The screens are identical, data flows through bindings/props rather than
+            hard-coded literals, and component definitions are counted on both sides (a <code>def</code> template
+            becomes a local React component). Both versions are unminified source, the way an LLM produces and reads
+            code.
+          </li>
+          <li>
+            <strong>Reproducible.</strong> The numbers on this page come from <code>token-report.json</code>, written
+            by <code>scripts/validate-tokens.ts</code>. Run <code>npm run validate:tokens</code> to re-measure
+            everything (parse → compile → count → print → rewrite the report); it exits non-zero if .aui is ever
+            larger than hand-written React. Run <code>npm run validate:tokens --check</code> to verify the committed
+            report is still current.
+          </li>
+        </ol>
+
+        <MethodTable />
+
+        <p className="method-foot">
+          Same tokenizer, same screens, committed corpus, one command to re-run: the numbers above are the current
+          output of that script.
+        </p>
       </div>
 
       <div className="gallery-note">
         <h3>Why the tokens matter</h3>
         <p>
-          For an LLM generating UI, every output token is cost, latency, and a chance to drift. When the same screen is
-          <strong> 2–4× more tokens in React than in .aui</strong>, the model has more room for error in exactly the
-          places that are hardest to repair — imports, class names, and prop plumbing. The generated React above is
-          already minimal; hand-written React with Tailwind classNames and imports is typically larger still.
+          For an LLM generating UI, every output token is cost, latency, and a chance to drift. When the same screen
+          is{' '}
+          <strong>
+            {Math.round((1 - totals.aui / totals.handwritten) * 100)}% cheaper in .aui than in hand-written React
+          </strong>
+          , the model has less room for error in exactly the places that are hardest to repair — imports, handlers,
+          and prop plumbing. The generated React is comparable to hand-written at worst and smaller at best; .aui is
+          the floor, because the compiler does the plumbing for you.
         </p>
       </div>
     </Section>

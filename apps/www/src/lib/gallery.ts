@@ -192,7 +192,7 @@ Page Billing data=$user
     Grid min=220 gap=md
       StatCard label="Current plan" value=$plan.tier tone=info
       StatCard label="Renews" value=$plan.renewsAt
-      StatCard label="Seats" value=$items
+      StatCard label="Seats" value=$items.length
 
     If condition=$user.role
       Card pad=lg

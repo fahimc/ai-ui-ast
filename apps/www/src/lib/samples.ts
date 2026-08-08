@@ -76,12 +76,12 @@ export const SAMPLES: Sample[] = [
       Card pad=lg
         Metric label="Notifications" value=$notifications
       Card pad=lg
-        Metric label="Team members" value=$items
+        Metric label="Team members" value=$items.length
 
     Section
       Row gap=sm align=center
         Heading level=2 "Recent tasks"
-        Badge tone=info $items
+        Badge tone=info $items.length
 
     If condition=$user.loggedIn
       Card pad=lg

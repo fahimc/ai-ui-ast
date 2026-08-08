@@ -1,22 +1,58 @@
 {
-  "name": "@ai-ui-ast/parser",
+  "name": "@codedia/parser",
   "version": "0.1.0",
+  "description": "LLM-first UI language: parse .aui source into a canonical UI AST and compile it deterministically to React. AST-shaped, token-efficient, and safe by construction.",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
   ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "prepare": "tsc",
-    "test": "node --test --experimental-strip-types src/*.test.ts"
+    "test": "node --test --experimental-strip-types src/*.test.ts",
+    "prepublishOnly": "npm test && npm run build"
+  },
+  "keywords": [
+    "aui",
+    "ui",
+    "ast",
+    "llm",
+    "react",
+    "compiler",
+    "design-system",
+    "prompt-engineering",
+    "token-efficiency",
+    "dsl"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Fahim Chowdhury",
+    "url": "https://github.com/fahimc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fahimc/ai-ui-ast.git",
+    "directory": "packages/parser"
+  },
+  "homepage": "https://ai-ui-ast.netlify.app",
+  "bugs": {
+    "url": "https://github.com/fahimc/ai-ui-ast/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "tsx": "^4.23.11",

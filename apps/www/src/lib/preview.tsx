@@ -1,96 +1,9 @@
 import React from 'react';
-import type { ComponentDef, ImportDecl, Node } from '@ai-ui-ast/parser';
+import type { ComponentDef, ImportDecl, Node } from '@codedia/parser';
 import { nodeSpec } from './registry';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Mock data context so $bindings resolve to something visible in the preview.
-// ─────────────────────────────────────────────────────────────────────────────
-export const MOCK_DATA: Record<string, unknown> = {
-  customer: {
-    name: 'Ada Lovelace',
-    email: 'ada@analytical.engine',
-    plan: 'Pro',
-    status: 'Active',
-    projects: 12,
-    storage: '48 GB',
-    avatar: 'https://i.pravatar.cc/96?img=47',
-  },
-  user: {
-    name: 'Grace Hopper',
-    loggedIn: true,
-    role: 'Admin',
-  },
-  items: [
-    { id: 1, name: 'Design system audit', status: 'Done', assignee: 'Ada' },
-    { id: 2, name: 'AUI compiler v0', status: 'In progress', assignee: 'Grace' },
-    { id: 3, name: 'Registry adapter: Radix', status: 'Planned', assignee: 'Alan' },
-  ],
-  projects: [
-    { id: 1, name: 'Website redesign', progress: 0.75, color: 'var(--accent)' },
-    { id: 2, name: 'Mobile app', progress: 0.4, color: '#34d399' },
-    { id: 3, name: 'Design tokens', progress: 0.9, color: '#fbbf24' },
-  ],
-  notifications: 3,
-  showAdvanced: true,
-  metrics: {
-    revenue: '$128.4k',
-    users: '48,201',
-    active: '9,312',
-    churn: '1.8%',
-    trend: [12, 18, 15, 26, 24, 31, 34],
-    series: [
-      { month: 'Jan', revenue: 42, users: 21 },
-      { month: 'Feb', revenue: 55, users: 28 },
-      { month: 'Mar', revenue: 48, users: 30 },
-      { month: 'Apr', revenue: 71, users: 38 },
-      { month: 'May', revenue: 84, users: 45 },
-      { month: 'Jun', revenue: 98, users: 51 },
-    ],
-  },
-  form: { email: 'ada@example.com', password: '', remember: true },
-  prefs: { email: true, push: false },
-  query: { loading: false },
-  plan: { tier: 'Pro', renewsAt: 'Aug 1, 2026' },
-};
-
-type Resolver = (path: string) => unknown;
-
-function lookup(path: string): unknown {
-  const parts = path.split('.');
-  let cur: unknown = MOCK_DATA;
-  for (const part of parts) {
-    if (cur && typeof cur === 'object' && part in (cur as Record<string, unknown>)) {
-      cur = (cur as Record<string, unknown>)[part];
-    } else {
-      return undefined;
-    }
-  }
-  return cur;
-}
-
-/** Resolve a prop value: $bindings hit the resolver, everything else is literal. */
-export function resolveValue(value: string | undefined, resolver: Resolver = lookup): string {
-  if (value === undefined) return '';
-  if (value.startsWith('$')) {
-    const resolved = resolver(value.slice(1));
-    if (resolved !== undefined && resolved !== null) return String(resolved);
-    return value; // unresolved binding renders as its path
-  }
-  return value;
-}
-
-export function resolveBool(value: string | undefined, resolver: Resolver = lookup): boolean {
-  if (value === undefined) return false;
-  if (value.startsWith('$')) {
-    const resolved = resolver(value.slice(1));
-    if (resolved === undefined || resolved === null) return false;
-    const v = String(resolved).toLowerCase();
-    if (v === 'false' || v === 'no' || v === '0' || v === '') return false;
-    return true; // non-empty strings, numbers, objects are truthy
-  }
-  const v = value.toLowerCase();
-  return v === 'true' || v === 'yes' || v === '1';
-}
+import { MOCK_DATA } from './mockData.ts';
+import { defResolver, lookup, resolveBool, resolveValue } from './resolve.ts';
+import type { Resolver } from './resolve.ts';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Token maps (mini design system)
@@ -213,21 +126,6 @@ interface RenderCtx {
   defs: Map<string, ComponentDef>;
   imported: Set<string>;
   resolver: Resolver;
-}
-
-function defResolver(def: ComponentDef, instance: Node, base: Resolver): Resolver {
-  return (path: string) => {
-    const root = path.split('.')[0];
-    if (def.params.includes(root)) {
-      const inst = instance.props.find((p) => p.key === root)?.value;
-      const defVal = def.defaultProps.find((p) => p.key === root)?.value;
-      const raw = inst ?? defVal;
-      if (raw === undefined) return undefined;
-      if (raw.startsWith('$')) return base(raw.slice(1));
-      return raw;
-    }
-    return base(path);
-  };
 }
 
 export function renderNode(node: Node, depth = 0, ctx: RenderCtx = { defs: new Map(), imported: new Set(), resolver: lookup }): React.ReactNode {
