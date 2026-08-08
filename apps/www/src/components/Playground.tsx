@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { parse } from '@codedia/parser';
+import { compile } from '@codedia/parser';
+import type { CanonicalDocument, Diagnostic } from '@codedia/parser';
 import { SAMPLES } from '../lib/samples';
-import { validate, type Diagnostic } from '../lib/validate';
-import { compileReact } from '@codedia/parser';
 import { AuiPreview } from '../lib/preview';
+import { WWW_REGISTRY } from '../lib/registry';
 import { CodeBlock } from './CodeBlock';
 
 type Tab = 'preview' | 'ast' | 'react';
@@ -16,15 +16,19 @@ interface PlaygroundProps {
   onClearCustom?: () => void;
 }
 
-function countNodes(doc: { rootNodes: { children: unknown[] }[] }): number {
+function countNodes(doc: CanonicalDocument | undefined): number {
+  if (!doc) return 0;
   let n = 0;
-  const walk = (nodes: { children: unknown[] }[]) => {
+  const walk = (nodes: { kind: string; children?: unknown[]; then?: unknown[]; body?: unknown[]; else?: unknown[] }[]) => {
     for (const node of nodes) {
       n += 1;
-      walk((node as { children: unknown[] }).children as { children: unknown[] }[]);
+      if (node.kind === 'if') walk((node.then as { kind: string; children?: unknown[] }[]) ?? []);
+      if (node.kind === 'if' && node.else) walk((node.else as { kind: string; children?: unknown[] }[]) ?? []);
+      if (node.kind === 'for') walk((node.body as { kind: string; children?: unknown[] }[]) ?? []);
+      if (node.children) walk(node.children as { kind: string; children?: unknown[] }[]);
     }
   };
-  walk(doc.rootNodes);
+  walk(doc.rootNodes as { kind: string; children?: unknown[] }[]);
   return n;
 }
 
@@ -46,19 +50,21 @@ export function Playground({ sampleId, onSampleChange, customCode, onClearCustom
 
   const { doc, diags, react, astJson, error, nodeCount } = useMemo(() => {
     try {
-      const parsed = parse(code);
-      const d = validate(code);
+      // One pipeline: parse → validate → normalize → compile, all in the
+      // package. The playground stays lenient (emits code alongside
+      // diagnostics) but surfaces every diagnostic from the validator.
+      const result = compile(code, { registry: WWW_REGISTRY, indentMode: 'llm', imports: { unsafeImports: true } });
       return {
-        doc: parsed,
-        diags: d,
-        react: compileReact(parsed),
-        astJson: JSON.stringify(parsed, null, 2),
+        doc: result.ast ?? ({ rootNodes: [] } as CanonicalDocument),
+        diags: result.diagnostics,
+        react: result.code ?? '',
+        astJson: JSON.stringify(result.ast ?? { rootNodes: [] }, null, 2),
         error: null as string | null,
-        nodeCount: countNodes(parsed),
+        nodeCount: countNodes(result.ast),
       };
     } catch (e) {
       return {
-        doc: { rootNodes: [] },
+        doc: { rootNodes: [] } as CanonicalDocument,
         diags: [],
         react: '',
         astJson: '',
@@ -174,7 +180,7 @@ export function Playground({ sampleId, onSampleChange, customCode, onClearCustom
           <div className="playground-output">
             {tab === 'preview' && (
               <div className="preview-canvas">
-                <AuiPreview nodes={doc.rootNodes} defs={doc.components} imports={doc.imports} />
+                <AuiPreview doc={doc} />
                 <div className="preview-note">
                   Live preview — bindings resolve against built-in mock data; components come from the v0 design-system registry.
                 </div>

@@ -1,5 +1,9 @@
 # AI UI AST v0.2 — LLM Implementation Plan
 
+> **Status: implemented (v0.2.0).** All phases (0–11) were executed in
+> `packages/parser` and `apps/www`. See `CHANGELOG.md` for the release notes
+> and `docs/architecture.md` for the resulting pipeline.
+
 > **Purpose:** This document is an implementation brief for a coding LLM/agent. It captures the findings from a code-level review of `@codedia/parser` v0.1.0 and turns them into an ordered, test-driven plan for v0.2.
 >
 > **Primary goal:** evolve AI UI AST from a strong proof of concept into a validated, deterministic, LLM-first UI language whose generated output is syntactically valid, semantically consistent, design-system constrained, and honestly benchmarked.

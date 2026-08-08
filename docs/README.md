@@ -21,6 +21,7 @@ measured consequence of the design.
 | Doc | What it covers |
 |---|---|
 | [Architecture](architecture.md) | Monorepo layout, data flow, and the pipeline. |
+| [V0.2 implementation plan](V0_2_LLM_IMPLEMENTATION_PLAN.md) | The v0.2 brief this release was built from. |
 | [LANGUAGE_SPEC_V0.md](../LANGUAGE_SPEC_V0.md) | The original v0 language spec. |
 | [BUILD_PLAN.md](../BUILD_PLAN.md) | Phased plan and acceptance criteria. |
 | [CONTRIBUTING.md](../CONTRIBUTING.md) | How to contribute. |

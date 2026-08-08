@@ -1,68 +1,66 @@
 import test from 'node:test';
 import assert from 'node:assert';
-import { parse } from '@codedia/parser';
-import type { ComponentDef, Document, Node } from '@codedia/parser';
-import { resolvePath } from '@codedia/parser';
+import { compile } from '@codedia/parser';
+import type { CanonicalDocument, ComponentDef, Node, Value } from '@codedia/parser';
 import { SAMPLES } from './samples.ts';
 import { GALLERY } from './gallery.ts';
-import { defResolver, lookup, resolveValue } from './resolve.ts';
-import type { Resolver } from './resolve.ts';
+import { WWW_REGISTRY } from './registry.ts';
+import { defFrames, resolveRaw, resolveText, resolveValue } from './resolve.ts';
+import type { Frames } from './resolve.ts';
+import { ROOT_FRAMES } from './resolve.ts';
 
 /**
  * Regression guard for the live preview: every playground sample and gallery
  * scenario must render its displayed text without "[object Object]", without
  * the word "undefined", and without a `$binding` left unresolved.
  *
- * It walks each parsed document exactly the way AuiPreview does (def params
- * resolve from their instance, For loops put `$item` in scope) but uses the
- * pure `resolveValue` path instead of React, so it runs under node --test.
+ * It walks each document's *canonical IR* — the same normalized tree the
+ * preview renders — with the same scope frames (def params, For item/index,
+ * root data), so preview parity is structural, not coincidental.
  */
 
-/** Props the preview actually renders as text (vs. layout/token props). */
 const DISPLAY_PROPS = new Set(['title', 'src', 'alt', 'name', 'label', 'value', 'placeholder', 'href']);
 
-function renderedTextsFor(doc: Document): string[] {
+function renderedTextsFor(doc: CanonicalDocument): string[] {
   const out: string[] = [];
   const defs: Map<string, ComponentDef> = new Map((doc.components ?? []).map((d) => [d.name, d]));
 
-  const walk = (node: Node, resolver: Resolver) => {
-    const def = defs.get(node.type);
-    if (def) {
-      // A def usage renders its template body with params scoped from this
-      // instance; the usage's own props are the arguments, not displayed text.
-      for (const child of def.children) walk(child, defResolver(def, node, resolver));
+  const walk = (node: Node, frames: Frames) => {
+    if (node.kind === 'if') {
+      for (const child of node.then) walk(child, frames);
+      if (node.else) for (const child of node.else) walk(child, frames);
       return;
     }
-
-    if (node.textContent !== undefined) out.push(resolveValue(node.textContent, resolver));
-    for (const p of node.props) {
-      if (DISPLAY_PROPS.has(p.key)) out.push(resolveValue(p.value, resolver));
-    }
-
-    if (node.type === 'For') {
-      const listBinding = node.props.find((p) => p.key === 'each' || p.key === 'in')?.value;
-      const list = listBinding?.startsWith('$') ? resolver(listBinding.slice(1)) : undefined;
+    if (node.kind === 'for') {
+      const list = resolveRaw(node.each, frames);
       const items = Array.isArray(list) ? list : [];
-      for (const item of items) {
-        const itemResolver: Resolver = (path) =>
-          path.startsWith('item.') ? resolvePath(item, path.slice('item.'.length)) : resolver(path);
-        for (const child of node.children) {
-          if (child.type !== 'Else') walk(child, itemResolver);
-        }
+      for (let i = 0; i < items.length; i++) {
+        const itemFrames: Frames = [...frames, { kind: 'for', item: items[i], index: i }];
+        for (const child of node.body) walk(child, itemFrames);
       }
       return;
     }
-
-    for (const child of node.children) walk(child, resolver);
+    // ComponentNode.
+    const def = defs.get(node.type);
+    if (def) {
+      for (const child of def.children) walk(child, defFrames(def, node, frames));
+      return;
+    }
+    if (node.textContent !== undefined) out.push(resolveText(node.textContent, frames));
+    for (const prop of node.props) {
+      if (DISPLAY_PROPS.has(prop.key)) out.push(resolveValue(prop.value as Value, frames));
+    }
+    for (const child of node.children) walk(child, frames);
   };
 
-  for (const root of doc.rootNodes) walk(root, lookup);
+  for (const root of doc.rootNodes) walk(root, ROOT_FRAMES);
   return out;
 }
 
 function checkExamples(label: string, code: string): void {
-  const doc = parse(code);
-  const rendered = renderedTextsFor(doc);
+  const result = compile(code, { registry: WWW_REGISTRY });
+  assert.ok(result.ast, `${label}: expected a canonical AST (${result.diagnostics.map((d) => d.code).join(', ')})`);
+  const rendered = renderedTextsFor(result.ast!);
   assert.ok(rendered.length > 0, `${label}: expected at least one rendered text`);
   for (const text of rendered) {
     assert.ok(!text.includes('[object Object]'), `${label}: rendered "[object Object]" in: "${text}"`);
@@ -81,9 +79,7 @@ test('all gallery scenarios render without [object Object] or unresolved binding
 
 test('interpolated bindings inside quoted text resolve (progress + greeting)', () => {
   const project = { name: 'Website redesign', progress: '75%' };
-  const resolve: Resolver = (path) =>
-    path.startsWith('item.') ? resolvePath(project, path.slice('item.'.length)) : lookup(path);
-
-  assert.strictEqual(resolveValue('Progress $item.progress', resolve), 'Progress 75%');
-  assert.strictEqual(resolveValue('Welcome back, $user.name'), 'Welcome back, Grace Hopper');
+  const frames: Frames = [...ROOT_FRAMES, { kind: 'for', item: project, index: 0 }];
+  assert.strictEqual(resolveText('Progress $item.progress', frames), 'Progress 75%');
+  assert.strictEqual(resolveText('Welcome back, $user.name', ROOT_FRAMES), 'Welcome back, Grace Hopper');
 });

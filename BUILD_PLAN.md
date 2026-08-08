@@ -1,83 +1,94 @@
 # Build Plan
 
-**Positioning:** AI UI AST is an **LLM-oriented UI DSL with a deterministic
-compiler** — not a generic token-compression parser. The language is a small,
-AST-shaped DSL; the compiler (not the model) owns imports, JSX, bindings, and
-formatting. Token savings are a measured consequence of the design, tracked in
+**Positioning:** AI UI AST is an **LLM-first, validated UI language with a
+deterministic compiler** — not a generic token-compression parser. The
+language is a small, AST-shaped DSL; the pipeline (validator + compiler, not
+the model) owns imports, JSX, bindings, events, and formatting. Token savings
+are a measured consequence of the design, tracked in
 `docs/token-methodology.md`.
 
 Status legend: ✅ shipped · 🚧 in progress · ⬜ planned
 
-## Phase 1: Core Parsing and AST — ✅ shipped (v0.1)
+## Phase 1: Core Parsing and Typed AST — ✅ shipped (v0.2)
 
-**Goal**: Parse `.aui` syntax into a canonical in-memory AST.
+**Goal**: Parse `.aui` syntax into a raw, typed, line-annotated AST.
 
-- ✅ Indentation-sensitive lexer (`tokenize`) and parser (`parse`).
-- ✅ Canonical AST types: `Node`, `Prop`, `ImportDecl`, `ComponentDef`, `Document`.
-- ✅ Language constructs: `import`, `def` templates with `$param` scope,
-  `If`/`Else`, `For`, `State`, `$bindings`, `action=` named actions, quoted
-  multi-word prop values.
-- ✅ Text/binding resolution helpers (`tokenizeText`, `interpolateText`,
-  `resolvePath`, `stringifyResolved`) — never `[object Object]`.
-- ⬜ Structural/schema validation as a first-class layer (currently the
-  playground's `validate.ts` is a light registry check; the full
-  schema/token/registry validator is the next milestone).
+- ✅ Indentation-sensitive lexer with **quote-aware comments**, indentation
+  metadata, and typed `RawValue` classification (string / binding / number /
+  boolean / bare).
+- ✅ `parse(source)` → `RawDocument` with 1-based line numbers.
+- ✅ Language constructs: `import` (registry-first), `def` templates with a
+  unified `ComponentParam` model, `If`/`Else`, `For`, `$bindings`,
+  `action=` named actions, `change=` semantic events, quoted multi-word
+  values.
 
-## Phase 2: Component Registry and Adapters — 🚧 contract shipped, adapters planned
+## Phase 2: Registry, Validation, Diagnostics, Normalization — ✅ shipped (v0.2)
 
-**Goal**: Map canonical AST nodes to real-world UI components without bleeding
-implementation details into `.aui`.
+**Goal**: Constrain the language with a host-owned registry and fail with
+repairable diagnostics before code generation.
 
-- ✅ The compiler emits a stable adapter contract: semantic imports from
-  `@/components/ui`, `data` for bindings, `onAction` for actions.
-- ✅ The playground ships a mini registry that renders the semantic nodes.
-- ⬜ A generic registry + adapter layer (Radix, MUI, shadcn/ui) that turns
-  `Button variant=primary` into the right import and props per target.
-- ⬜ Design-token validation against a theme schema.
+- ✅ `defineRegistry` / `extendRegistry` / `CORE_REGISTRY` — nodes, prop
+  types/tokens, child constraints, event mappings, third-party imports.
+- ✅ Structured diagnostics with stable codes (`AUI_*`), line/column, and fix
+  hints; `formatDiagnosticsForLLM` for one-shot repair loops.
+- ✅ Node/prop/token/type/required/child validation, structural checks
+  (orphan/duplicate `Else`, `For` without a list), indentation validation
+  (strict + LLM-friendly), identifier validation, binding-path safety,
+  duplicate/collision checks, resource limits.
+- ✅ `normalize()` — RawDocument → CanonicalDocument with typed values and
+  explicit `If`/`For` nodes.
+- ✅ npm consumers validate without importing website code.
 
-## Phase 3: React Compiler — ✅ shipped (v0.1)
+## Phase 3: React Compiler — ✅ shipped (v0.2)
 
-**Goal**: Translate a validated AST into standard, human-readable React + TSX.
+**Goal**: Translate validated canonical IR into valid, human-readable,
+deterministic React + TSX.
 
-- ✅ `compileReact(doc)` — deterministic, readable output: imports (sorted,
-  deduped), local `function` components for `def`, ternaries for `If/Else`,
-  `.map()` for `For`, interpolated bindings in text, named actions.
-- ✅ Compaction pass so generated output is ≤ hand-written React in every
-  scenario (driven by the token validator — see Phase 4).
-- ✅ 19 unit tests covering lexer, parser, text resolution, and compiler.
-- ⬜ Prettier-grade formatting options and JSX `key` emission for `For` loops.
-- ⬜ Round-trip: canonical source printing (`AST → .aui`).
+- ✅ Shared `renderJsxChildren` helper — 0/1/2+ children → `null` / direct /
+  fragment, fixing the multi-child invalid-JSX bug across If/Else/For/defs/
+  document roots.
+- ✅ Deterministic loop `key`s; numeric/boolean/list props emit typed JSX;
+  `Page data=` consumed as a contract; `$root.` absolute bindings.
+- ✅ Registry-derived imports (core adapter + third-party mappings),
+  deterministic and deduplicated; side-effect imports supported in compat
+  mode; aliases/namespace imports rejected with diagnostics.
+- ✅ Semantic `change=` events compile to target handlers with payloads.
+- ✅ Every golden fixture passes a real TSX transpile gate.
+- ✅ Canonical printer `printAui()` with round-trip tests.
 
-## Phase 4: AI Integration and Benchmarking — ✅ token benchmarking shipped, real-LLM benchmarks planned
+## Phase 4: AI Integration and Benchmarking — ✅ token methodology rebuilt; 🚧 live LLM runs opt-in
 
-**Goal**: Prove that an LLM generates this syntax better than TSX.
-
-- ✅ Token methodology: `apps/www/scripts/validate-tokens.ts` counts every
-  scenario three ways (`.aui` / generated / hand-written) with the real GPT-4
-  tokenizer (`cl100k_base`) and writes `token-report.json` (checked into git;
-  `--check` verifies it stays current).
-- ✅ Result: **1,080 tokens saved across six real screens — 48% fewer, 1.9×
-  smaller than hand-written React** (see `docs/token-methodology.md`).
-- ⬜ Live LLM benchmarks: have actual Claude/GPT models generate the same six
-  screens in `.aui` vs TSX; compare validity, repair iterations, tokens, and
-  visual fidelity.
-- ⬜ Error-recovery loop: validation failures formatted back to the LLM for
-  self-correction.
+- ✅ Token methodology rebuilt: tokenizer encodings pinned explicitly
+  (`o200k_base` primary, `cl100k_base` legacy), no chars/4 approximation on
+  the benchmark path, per-encoding reports, functional-equivalence feature
+  contracts per scenario, TSX syntax gate, cold/warm instruction-overhead
+  accounting.
+- ✅ Result: **1,140 tokens saved (`o200k_base`) — 50% fewer, 2.0× smaller
+  than hand-written React** across six real screens.
+- ✅ LLM generation benchmark harness (`npm run benchmark:llm -w www`): 36
+  versioned UI briefs with functional contracts, AUI vs React conditions,
+  fixture mode (CI-safe) and opt-in live mode (env API keys), metrics for
+  tokens, first-pass validity, repairs, completion, contract pass rate, and
+  cost.
+- 🚧 Live provider runs against real paid models (opt-in via credentials).
+- 🚧 Error-recovery loop in live mode: validation failures formatted back to
+  the LLM for self-correction.
 
 ## Phase 5: Tooling and Ecosystem — ⬜ planned
 
 - ⬜ CLI (`aui build` / `aui validate`) so the DSL is usable outside the site.
 - ⬜ VS Code extension (syntax highlighting + live preview).
-- ⬜ Non-React backends (HTML, React Native, SwiftUI) via a target-neutral IR.
+- ⬜ Non-React backends (HTML, React Native, SwiftUI) via the canonical IR.
 - ⬜ Escape hatches (expression language) **after** the core stabilizes.
 
 ## Acceptance Criteria
 
 | Criterion | Status |
 |---|---|
-| Parser accepts valid v0 grammar; deterministic ASTs | ✅ (19 tests) |
-| Repairable diagnostics suitable for an LLM | 🚧 partial (playground registry check) |
-| Registry maps core components to ≥1 real library | 🚧 contract shipped; adapter planned |
-| Compiler outputs accessible, type-safe React/TSX | ✅ (deterministic; a11y defaults via semantic nodes) |
-| Measured token savings vs TSX | ✅ (1,080 tokens, 1.9×, reproducible) |
-| Real-LLM generation benchmark | ⬜ next major milestone |
+| Parser accepts valid v0.2 grammar; deterministic raw AST with typed values | ✅ (79 tests) |
+| Repairable diagnostics suitable for an LLM (stable codes, line/column, hints) | ✅ |
+| Registry maps core components + third-party imports; strict mode is registry-only | ✅ |
+| Compiler outputs valid, type-safe React/TSX for every canonical fixture | ✅ (TSX transpile gate) |
+| Measured token savings with pinned encodings and equivalence metadata | ✅ (1,140 tokens, 50%, 2.0×) |
+| LLM generation benchmark harness runs end-to-end | ✅ (fixture mode; live opt-in) |
+| Playground preview and compiler consume the same canonical semantics | ✅ |

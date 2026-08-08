@@ -1,23 +1,23 @@
 # AI UI AST
 
-**An LLM-oriented UI DSL with a deterministic compiler.** Express screens in
-`.aui` — a small DSL that *is* the UI tree — and a compiler turns it into
-readable, testable React. Small grammar, no invented imports or CSS.
+**An LLM-first, validated UI language with a deterministic compiler.** Express
+screens in `.aui` — a small DSL that *is* the UI tree — and a deterministic
+pipeline validates it against a host-owned registry and compiles it to
+readable React. The model expresses intent; deterministic software owns
+imports, JSX, bindings, events, and formatting.
 
 This is a DSL plus a compiler, not a generic token-compression parser. The
-point is that an LLM writes a tiny, predictable tree instead of framework
-boilerplate; the compiler absorbs the messy parts deterministically. The
 token savings are real — and measured, not claimed — but they are a
 consequence of the design, not the identity.
 
 ## The core proposition
 
 **The UI tree is the interface.** An LLM writes a small, AST-shaped DSL that
-*is* the tree; a deterministic compiler turns it into production React. The
-messy, error-prone work — imports, JSX, bindings, formatting, framework
-conventions — moves from the model to code, where it is deterministic and
-testable. The model's job shrinks to the one thing it does well: deciding
-what the UI should be.
+*is* the tree; validation + a deterministic compiler turn it into production
+React. The messy, error-prone work — imports, JSX, binding resolution,
+framework conventions — moves from the model to code, where it is
+deterministic and testable. The model's job shrinks to the one thing it does
+well: deciding what the UI should be.
 
 > **Try the live playground: <https://ai-ui-ast.netlify.app>**
 >
@@ -45,7 +45,7 @@ Card max=md pad=lg
 ```
 
 The compiler owns imports, JSX syntax, token resolution, component lookup,
-accessibility defaults, and output formatting. The language removes framework
+event wiring, and output formatting. The language removes framework
 boilerplate, dependency decisions, arbitrary CSS, and most syntax from the
 representation an AI has to generate.
 
@@ -56,8 +56,8 @@ compiler target. `.aui` is the input format; React is the output.
 
 | Path | What |
 |---|---|
-| `packages/parser` | **`@codedia/parser`** — lexer, parser, AST, React compiler, text/binding resolution. Zero runtime deps, ESM. |
-| `apps/www` | The public website: docs, language reference, examples gallery, and an interactive playground (preview / AST / React tabs, diagnostics). |
+| `packages/parser` | **`@codedia/parser`** — lexer, parser, registry, validator, diagnostics, normalizer (canonical IR), React compiler, canonical printer. Zero runtime deps, ESM. |
+| `apps/www` | The public website: docs, language reference, examples gallery, interactive playground, token methodology, and the LLM benchmark harness. |
 | `docs/` | Full documentation: [API](docs/api.md), [grammar](docs/grammar.md), [compiler](docs/compiler.md), [token methodology](docs/token-methodology.md), [architecture](docs/architecture.md). |
 | `skills/write-aui-ui` | An agent skill that teaches coding agents to write `.aui` and use the module. |
 | `LANGUAGE_SPEC_V0.md` | The original v0 language specification. |
@@ -70,91 +70,106 @@ npm install @codedia/parser
 ```
 
 ```ts
-import { parse, compileReact } from '@codedia/parser';
+import { compile } from '@codedia/parser';
 
-const doc = parse(`
+const result = compile(`
 Page Dashboard data=$metrics
   Stack gap=md
     Heading level=1 "Overview"
     Metric label="Active users" value=$metrics.active
-`);
+    Button variant=primary action=refresh "Refresh"
+`, { strict: true });
 
-console.log(doc.rootNodes[0].type);   // 'Page'
-const tsx = compileReact(doc);        // deterministic React + TSX
+if (!result.ok) {
+  console.error(formatDiagnostics(result.diagnostics)); // repairable, line-anchored
+} else {
+  console.log(result.code); // deterministic React + TSX
+}
 ```
 
-Full API and grammar: [`packages/parser/README.md`](packages/parser/README.md)
+`compile()` runs the whole pipeline — parse → validate → normalize → compile —
+so consumers never sequence low-level calls. Low-level APIs (`parse`,
+`validate`, `normalize`, `compileReact`, `printAui`) are all exported for
+tooling. Full API and grammar: [`packages/parser/README.md`](packages/parser/README.md)
 and [`docs/`](docs/).
+
+## The v0.2 pipeline
+
+```text
+.aui source
+   │
+   ▼
+lexer + indent parser ──────► RawDocument (typed raw values, line numbers)
+   │
+   ▼
+validate(doc, registry) ────► Diagnostic[] (registry, structural, indent,
+   │                           identifiers, bindings, resource limits)
+   ▼
+normalize(doc, registry) ────► CanonicalDocument (typed values, If/For nodes,
+   │                            unified def params, registry-derived imports)
+   ▼
+compileReact(canonical) ─────► React + TSX (fragments, keys, events, adapter)
+```
+
+Key properties:
+
+- **Host-owned registry.** `defineRegistry({ ... })` declares which nodes
+  exist, their prop types/tokens, event mappings, and third-party imports.
+  Strict compilation is registry-only: models never invent package specifiers.
+- **Typed values.** `$user.name`, `label="hello"`, `label="$user.name"`,
+  `level=2`, `round=true`, and `variant=primary` are distinct from parse to
+  compile — no string guessing.
+- **Repairable diagnostics.** Stable codes (`AUI_INVALID_TOKEN`, …), line and
+  column, and fix hints — designed to be fed straight back to an LLM.
+- **Semantic events.** `change=emailChanged` compiles to the target handler
+  with the right payload through registry metadata — never framework syntax
+  in the language.
+- **Shared semantics.** The website preview and the compiler consume the same
+  canonical IR and the same binding-scope rules — no independent
+  re-implementations to drift.
 
 ## Design goals
 
 1. **LLM-first syntax** — small output surface, low token count, predictable grammar.
 2. **AST-shaped** — the source maps almost 1:1 to the internal tree; parsing is trivial and deterministic.
-3. **Design-system native** — components and tokens come from a registry, not model-invented imports/CSS.
-4. **Safe by construction** — no arbitrary JavaScript, CSS, package imports, or executable expressions in the core language.
-5. **Strong validation** — invalid components, props, tokens, bindings, and actions fail before React generation.
+3. **Design-system native** — components, tokens, events, and imports come from a registry, not model-invented code.
+4. **Constrained, not unsafe** — no arbitrary JavaScript, CSS, or executable expressions in the core language.
+5. **Strong validation** — invalid components, props, tokens, bindings, and nesting fail with repairable diagnostics before React generation.
 6. **Accessible defaults** — semantic nodes and component contracts carry accessibility behaviour.
 7. **Framework-separated** — React is the first compiler backend, not part of the grammar.
-8. **Round-trip friendly** — source → AST → canonical source is deterministic.
+8. **Round-trip friendly** — `normalize(parse(printAui(normalize(parse(source)))))` preserves the canonical AST.
 9. **Measurably better for AI** — token use, validity, and repair iterations are benchmarked against TSX.
 
 ## Token efficiency (why it matters)
 
-The Examples gallery measures every scenario with the **real GPT-4 tokenizer**
-(`cl100k_base`), comparing `.aui` against the generated React *and* hand-written
-React implementations of the same screens:
+The Examples gallery measures every scenario with the **real GPT tokenizers**
+(`o200k_base` primary, `cl100k_base` legacy — both pinned explicitly), comparing
+`.aui` against the generated React *and* hand-written React implementations of
+the same screens, under a **functional-equivalence gate** (every scenario
+declares a machine-readable feature contract; the validator fails if a
+declared feature is missing from either implementation):
 
-> **Six real screens — 1,080 tokens saved, 48% fewer, 1.9× smaller than
-> hand-written React.** The tool's generated React is smaller than hand-written
-> code in every scenario.
+> **Six real screens — 1,140 tokens saved (`o200k_base`), 50% fewer, 2.0×
+> smaller than hand-written React** (1,128 tokens / 50% / 2.0× under
+> `cl100k_base`). The tool's generated React is smaller than hand-written code
+> in every scenario.
 
 Every number is reproducible via `npm run validate:tokens` (in `apps/www`),
-which re-counts the corpus and rewrites `token-report.json`. See
-[docs/token-methodology.md](docs/token-methodology.md) and the live
-[Examples page](https://ai-ui-ast.netlify.app/#/examples).
-
-## The pipeline
-
-```text
-Prompt / Figma / agent
-        |
-        v
-      .aui
-        |
-        v
-  lexer + indent parser
-        |
-        v
-   canonical UI AST
-        |
-        +--> schema/type validation
-        +--> design-token validation
-        +--> component-registry resolution
-        +--> accessibility rules
-        +--> data/action validation
-        |
-        v
-  target-neutral IR
-        |
-        +-------------------+
-        |                   |
-        v                   v
- React compiler        future targets
-        |             HTML / RN / SwiftUI
-        v
- React + TypeScript
-```
+which re-counts the corpus and rewrites `token-report.json`. There is no
+chars/4 approximation on the benchmark path — tokenizer failures fail loudly.
+See [docs/token-methodology.md](docs/token-methodology.md).
 
 ## Development
 
 ```bash
 git clone https://github.com/fahimc/ai-ui-ast.git
 cd ai-ui-ast
-npm install                # installs workspaces, builds @codedia/parser
-npm test -w @codedia/parser   # 19 unit tests (parser, compiler, text resolution)
-npm test -w www            # 3 rendering regression tests (every sample + gallery scenario)
+npm install                 # installs workspaces, builds @codedia/parser
+npm test -w @codedia/parser # 79 unit tests (lexer, parser, validate, normalize, compiler, printer)
+npm test -w www             # rendering regression tests (every sample + gallery scenario)
 npm run validate:tokens -w www   # re-measure token savings; --check verifies the committed report
-npm run dev -w www         # the playground, http://localhost:5173
+npm run benchmark:llm -w www     # LLM-vs-React generation benchmark (fixture mode; live is opt-in)
+npm run dev -w www          # the playground, http://localhost:5173
 ```
 
 ## Repository layout
@@ -163,15 +178,21 @@ npm run dev -w www         # the playground, http://localhost:5173
 ai-ui-ast/
 ├── packages/parser/       # the published npm module (@codedia/parser)
 │   └── src/
-│       ├── lexer.ts       # tokenizer
-│       ├── parser.ts      # indentation-based parser → Document
-│       ├── ast.ts         # types: Node, Prop, ImportDecl, ComponentDef, Document
-│       ├── text.ts        # $binding tokenization + resolution helpers
-│       └── react.ts       # compileReact: Document → React + TSX
+│       ├── lexer.ts       # quote-aware comments, indentation metadata, typed raw values
+│       ├── parser.ts      # indentation-based parser → RawDocument
+│       ├── ast.ts         # raw AST + canonical IR types
+│       ├── diagnostics.ts # stable codes, line/column, LLM-repair formatting
+│       ├── registry.ts    # defineRegistry + core registry + event/import metadata
+│       ├── validate.ts    # registry/structural/indentation/identifier/limits checks
+│       ├── normalize.ts   # RawDocument → CanonicalDocument
+│       ├── bindings.ts    # binding paths, scope model, path safety
+│       ├── react.ts       # canonical IR → React + TSX
+│       ├── print.ts       # canonical .aui printer (round-trip)
+│       ├── compile.ts     # high-level parse→validate→normalize→compile
+│       └── *.test.ts      # 79 unit tests (node:test)
 ├── apps/www/              # the website (Vite + React)
-│   ├── src/pages/         # Home, Language, Examples, Playground, Roadmap
-│   ├── src/lib/           # registry, mock data, resolution, gallery, handwritten corpus
-│   └── scripts/           # validate-tokens.ts (token methodology checker)
+│   ├── src/lib/           # website registry, mock data, resolution, gallery, corpus
+│   └── scripts/           # validate-tokens.ts, benchmark/ (LLM harness + brief corpus)
 ├── docs/                  # API, grammar, compiler, token methodology, architecture
 ├── skills/write-aui-ui/   # agent skill (SKILL.md)
 ├── LANGUAGE_SPEC_V0.md

@@ -1,17 +1,39 @@
-import { encode } from 'gpt-tokenizer';
+import { encode as encodeO200k } from 'gpt-tokenizer/encoding/o200k_base';
+import { encode as encodeCl100k } from 'gpt-tokenizer/encoding/cl100k_base';
 
 /**
- * Count tokens with the real GPT-4/GPT-3.5 BPE tokenizer.
- * The analysis on the Examples page is only as credible as the count,
- * so we use the actual model tokenizer rather than an approximation.
+ * Token counting with explicitly pinned tokenizer encodings.
+ *
+ * v0.2 never relies on a tokenizer package's default encoding and never
+ * falls back to a chars/4 approximation on the reproducible benchmark path:
+ * if the selected encoding cannot be loaded, counting fails loudly.
+ *
+ * `estimateTokens` is the only approximation and it is clearly named as a
+ * UI-only helper — it is never used by `validate:tokens`.
  */
-export function countTokens(text: string): number {
-  try {
-    return encode(text).length;
-  } catch {
-    // Fallback: rough char/4 estimate if the tokenizer ever fails to load.
-    return Math.ceil(text.length / 4);
-  }
+
+export type TokenizerEncoding = 'o200k_base' | 'cl100k_base';
+
+export const TOKENIZER_ENCODINGS: TokenizerEncoding[] = ['o200k_base', 'cl100k_base'];
+
+export const ENCODING_LABELS: Record<TokenizerEncoding, string> = {
+  o200k_base: 'o200k_base (GPT-4o / GPT-4.1 family)',
+  cl100k_base: 'cl100k_base (GPT-3.5 / GPT-4 legacy)',
+};
+
+const ENCODERS: Record<TokenizerEncoding, (text: string) => number[]> = {
+  o200k_base: encodeO200k,
+  cl100k_base: encodeCl100k,
+};
+
+/** Count tokens with an explicitly selected encoding. Throws on failure. */
+export function countTokens(text: string, encoding: TokenizerEncoding = 'o200k_base'): number {
+  return ENCODERS[encoding](text).length;
+}
+
+/** UI-only rough estimate (chars/4). Never used by the reproducible benchmark. */
+export function estimateTokens(text: string): number {
+  return Math.ceil(text.length / 4);
 }
 
 export interface TokenComparison {
@@ -25,9 +47,9 @@ export interface TokenComparison {
   reductionPct: number;
 }
 
-export function compareTokens(auiCode: string, reactCode: string): TokenComparison {
-  const aui = countTokens(auiCode);
-  const react = countTokens(reactCode);
+export function compareTokens(auiCode: string, reactCode: string, encoding: TokenizerEncoding = 'o200k_base'): TokenComparison {
+  const aui = countTokens(auiCode, encoding);
+  const react = countTokens(reactCode, encoding);
   const saved = Math.max(0, react - aui);
   const ratio = react / aui;
   const reductionPct = (1 - aui / react) * 100;

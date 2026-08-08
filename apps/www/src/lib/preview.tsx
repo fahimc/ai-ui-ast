@@ -1,12 +1,13 @@
 import React from 'react';
-import type { ComponentDef, ImportDecl, Node } from '@codedia/parser';
-import { nodeSpec } from './registry';
+import type { CanonicalDocument, ComponentDef, ComponentNode, Node, Value } from '@codedia/parser';
+import { defFrames, resolveBool, resolveRaw, resolveText, resolveValue } from './resolve.ts';
+import type { Frames } from './resolve.ts';
+import { ROOT_FRAMES } from './resolve.ts';
 import { MOCK_DATA } from './mockData.ts';
-import { defResolver, lookup, resolveBool, resolveValue } from './resolve.ts';
-import type { Resolver } from './resolve.ts';
+import { WWW_REGISTRY, nodeSpec } from './registry.ts';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Token maps (mini design system)
+// Token maps (mini design system — UI-only rendering concerns live here)
 // ─────────────────────────────────────────────────────────────────────────────
 const SPACE: Record<string, string> = { none: '0', xs: '4px', sm: '8px', md: '12px', lg: '20px', xl: '32px' };
 
@@ -31,7 +32,7 @@ function cx(...parts: Array<string | false | undefined>): string {
   return parts.filter(Boolean).join(' ');
 }
 
-export function prop(node: Node, key: string): string | undefined {
+function prop(node: ComponentNode, key: string): Value | undefined {
   return node.props.find((p) => p.key === key)?.value;
 }
 
@@ -84,8 +85,8 @@ function Icon({ name, size = 16 }: { name: string; size?: number }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Third-party placeholder: renders imported components as a styled frame so the
-// preview stays honest about what is external.
+// Third-party placeholder: renders imported/registered components as a styled
+// frame so the preview stays honest about what is external.
 // ─────────────────────────────────────────────────────────────────────────────
 function Sparkline({ data }: { data: number[] }) {
   const w = 160;
@@ -103,10 +104,10 @@ function Sparkline({ data }: { data: number[] }) {
   );
 }
 
-function ExternalComponent({ node, children, text }: { node: Node; children: React.ReactNode; text: string }) {
+function ExternalComponent({ node, children, text }: { node: ComponentNode; children: React.ReactNode; text: string }) {
   const isChart = /Chart|Area|Line|Bar/i.test(node.type) && node.type !== 'Grid';
   return (
-    <div className="aui-external" title={`Imported component — rendered by its host library`}>
+    <div className="aui-external" title={`Registered component — rendered by its host library`}>
       <div className="aui-external-head">
         <Icon name="zap" size={13} />
         <span className="aui-external-name">{node.type}</span>
@@ -120,34 +121,63 @@ function ExternalComponent({ node, children, text }: { node: Node; children: Rea
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Node renderer (single recursive implementation with a custom resolver)
+// Canonical IR renderer (single recursive implementation with shared frames)
 // ─────────────────────────────────────────────────────────────────────────────
 interface RenderCtx {
   defs: Map<string, ComponentDef>;
-  imported: Set<string>;
-  resolver: Resolver;
+  /** Registry entries with an `imports` mapping render as external frames. */
+  external: Set<string>;
 }
 
-export function renderNode(node: Node, depth = 0, ctx: RenderCtx = { defs: new Map(), imported: new Set(), resolver: lookup }): React.ReactNode {
-  const p = (k: string) => prop(node, k);
-  const rv = (v: string | undefined) => resolveValue(v, ctx.resolver);
-  const rbool = (v: string | undefined) => resolveBool(v, ctx.resolver);
-  const children = node.children
-    .filter((c) => c.type !== 'Else')
-    .map((c, i) => <React.Fragment key={i}>{renderNode(c, depth + 1, ctx)}</React.Fragment>);
-  const text = node.textContent !== undefined ? rv(node.textContent) : '';
+export function renderNode(node: Node, frames: Frames, ctx: RenderCtx): React.ReactNode {
+  if (node.kind === 'if') {
+    const condition = resolveBool(node.condition, frames);
+    if (condition) {
+      return <>{node.then.map((c, i) => <React.Fragment key={i}>{renderNode(c, frames, ctx)}</React.Fragment>)}</>;
+    }
+    if (node.else) {
+      return <>{node.else.map((c, i) => <React.Fragment key={i}>{renderNode(c, frames, ctx)}</React.Fragment>)}</>;
+    }
+    return null;
+  }
 
-  // Component template usage → render the def body with params resolved.
+  if (node.kind === 'for') {
+    const list = resolveRaw(node.each, frames);
+    const items = Array.isArray(list) ? list : [];
+    return (
+      <>
+        {items.map((item, i) => (
+          <React.Fragment key={i}>
+            {node.body.map((child, j) => (
+              <React.Fragment key={j}>{renderNode(child, [...frames, { kind: 'for', item, index: i }], ctx)}</React.Fragment>
+            ))}
+          </React.Fragment>
+        ))}
+      </>
+    );
+  }
+
+  return renderComponent(node, frames, ctx);
+}
+
+function renderComponent(node: ComponentNode, frames: Frames, ctx: RenderCtx): React.ReactNode {
+  const p = (k: string) => prop(node, k);
+  const rv = (v: Value | undefined) => resolveValue(v, frames);
+  const rbool = (v: Value | undefined) => resolveBool(v, frames);
+  const text = resolveText(node.textContent, frames);
+  const children = node.children.map((c, i) => <React.Fragment key={i}>{renderNode(c, frames, ctx)}</React.Fragment>);
+
+  // Component-template usage → render the def body with params scoped.
   const def = ctx.defs.get(node.type);
   if (def) {
     const inner = def.children.map((c, i) => (
-      <React.Fragment key={i}>{renderNode(c, depth + 1, { ...ctx, resolver: defResolver(def, node, ctx.resolver) })}</React.Fragment>
+      <React.Fragment key={i}>{renderNode(c, defFrames(def, node, frames), ctx)}</React.Fragment>
     ));
     return <div className="aui-def-use">{inner}</div>;
   }
 
-  // Imported third-party component → styled placeholder frame.
-  if (ctx.imported.has(node.type)) {
+  // Registered/imported third-party component → styled placeholder frame.
+  if (ctx.external.has(node.type)) {
     return (
       <ExternalComponent node={node} text={text}>
         {children}
@@ -169,7 +199,7 @@ export function renderNode(node: Node, depth = 0, ctx: RenderCtx = { defs: new M
 
     case 'Stack':
       return (
-        <div className="aui-stack" style={{ gap: space(p('gap'), '8px'), alignItems: p('align') }}>
+        <div className="aui-stack" style={{ gap: space(rv(p('gap')), '8px'), alignItems: rv(p('align')) }}>
           {children}
         </div>
       );
@@ -178,7 +208,7 @@ export function renderNode(node: Node, depth = 0, ctx: RenderCtx = { defs: new M
       return (
         <div
           className="aui-row"
-          style={{ gap: space(p('gap'), '8px'), alignItems: p('align') ?? 'center', justifyContent: p('justify') }}
+          style={{ gap: space(rv(p('gap')), '8px'), alignItems: rv(p('align')) || 'center', justifyContent: rv(p('justify')) }}
         >
           {children}
         </div>
@@ -189,8 +219,8 @@ export function renderNode(node: Node, depth = 0, ctx: RenderCtx = { defs: new M
         <div
           className="aui-grid"
           style={{
-            gridTemplateColumns: `repeat(auto-fill, minmax(${p('min') || 280}px, 1fr))`,
-            gap: space(p('gap'), '12px'),
+            gridTemplateColumns: `repeat(auto-fill, minmax(${rv(p('min')) || 280}px, 1fr))`,
+            gap: space(rv(p('gap')), '12px'),
           }}
         >
           {children}
@@ -198,7 +228,7 @@ export function renderNode(node: Node, depth = 0, ctx: RenderCtx = { defs: new M
       );
 
     case 'Card':
-      return <div className={cx('aui-card', p('pad') && `pad-${p('pad')}`)}>{children}</div>;
+      return <div className={cx('aui-card', rv(p('pad')) && `pad-${rv(p('pad'))}`)}>{children}</div>;
 
     case 'Section':
       return <section className="aui-section">{children}</section>;
@@ -207,10 +237,10 @@ export function renderNode(node: Node, depth = 0, ctx: RenderCtx = { defs: new M
       return <div className="aui-spacer" />;
 
     case 'Heading': {
-      const level = Math.min(6, Math.max(1, parseInt(p('level') || '2', 10) || 2));
+      const level = Math.min(6, Math.max(1, parseInt(rv(p('level')) || '2', 10) || 2));
       const Tag = `h${level}` as React.ElementType;
       return (
-        <Tag className={cx('aui-heading', `lv-${level}`)} style={{ color: toneColor(p('tone')) }}>
+        <Tag className={cx('aui-heading', `lv-${level}`)} style={{ color: toneColor(rv(p('tone'))) }}>
           {text}
         </Tag>
       );
@@ -218,13 +248,13 @@ export function renderNode(node: Node, depth = 0, ctx: RenderCtx = { defs: new M
 
     case 'Text':
       return (
-        <p className={cx('aui-text', p('weight') && `w-${p('weight')}`)} style={{ color: toneColor(p('tone')) }}>
+        <p className={cx('aui-text', rv(p('weight')) && `w-${rv(p('weight'))}`)} style={{ color: toneColor(rv(p('tone'))) }}>
           {text}
         </p>
       );
 
     case 'Image': {
-      const round = p('round') !== undefined;
+      const round = rbool(p('round'));
       return <img className={cx('aui-image', round && 'round')} src={rv(p('src'))} alt={rv(p('alt')) || ''} />;
     }
 
@@ -264,13 +294,13 @@ export function renderNode(node: Node, depth = 0, ctx: RenderCtx = { defs: new M
       );
 
     case 'Button': {
-      const variant = p('variant') || 'primary';
+      const variant = rv(p('variant')) || 'primary';
       return (
         <button
           type="button"
-          className={cx('aui-button', `variant-${variant}`, p('size') && `size-${p('size')}`)}
+          className={cx('aui-button', `variant-${variant}`, rv(p('size')) && `size-${rv(p('size'))}`)}
           disabled={rbool(p('disabled'))}
-          title={p('action') ? `action: ${p('action')}` : undefined}
+          title={rv(p('action')) ? `action: ${rv(p('action'))}` : undefined}
         >
           {text}
         </button>
@@ -288,18 +318,20 @@ export function renderNode(node: Node, depth = 0, ctx: RenderCtx = { defs: new M
       return (
         <input
           className="aui-input"
-          type={p('type') || 'text'}
+          type={rv(p('type')) || 'text'}
           placeholder={rv(p('placeholder'))}
           defaultValue={rv(p('value'))}
           readOnly
         />
       );
 
-    case 'Select':
+    case 'Select': {
+      const optionsVal = p('options');
+      const options = optionsVal?.kind === 'list' ? optionsVal.value : (rv(optionsVal) || '').split(',');
       return (
         <select className="aui-select" defaultValue={rv(p('value'))}>
-          {(p('options') || '').split(',').map((o) => {
-            const opt = o.trim();
+          {options.map((o) => {
+            const opt = String(o).trim();
             return (
               <option key={opt} value={opt}>
                 {opt}
@@ -308,6 +340,7 @@ export function renderNode(node: Node, depth = 0, ctx: RenderCtx = { defs: new M
           })}
         </select>
       );
+    }
 
     case 'Checkbox':
       return (
@@ -329,69 +362,18 @@ export function renderNode(node: Node, depth = 0, ctx: RenderCtx = { defs: new M
       );
 
     case 'Alert': {
-      const tone = p('tone') || 'info';
+      const tone = rv(p('tone')) || 'info';
       return <div className={cx('aui-alert', `tone-${tone}`)}>{children.length ? children : text}</div>;
     }
 
     case 'Badge': {
-      const tone = p('tone') || 'default';
+      const tone = rv(p('tone')) || 'default';
       return <span className={cx('aui-badge', `tone-${tone}`)}>{text}</span>;
     }
 
     case 'Spinner': {
-      const size = p('size') === 'sm' ? 14 : p('size') === 'lg' ? 26 : 20;
+      const size = rv(p('size')) === 'sm' ? 14 : rv(p('size')) === 'lg' ? 26 : 20;
       return <span className="aui-spinner" style={{ width: size, height: size }} aria-label="Loading" role="status" />;
-    }
-
-    case 'If': {
-      const condition = rbool(p('condition'));
-      const elseNode = node.children.find((c) => c.type === 'Else');
-      if (condition) return <>{children}</>;
-      if (elseNode) {
-        return (
-          <>
-            {elseNode.children.map((c, i) => (
-              <React.Fragment key={i}>{renderNode(c, depth + 1, ctx)}</React.Fragment>
-            ))}
-          </>
-        );
-      }
-      return null;
-    }
-
-    case 'For': {
-      const listBinding = p('each') || p('in') || '$items';
-      const list = listBinding.startsWith('$') ? (ctx.resolver(listBinding.slice(1)) as unknown[] | undefined) : undefined;
-      const items = Array.isArray(list) ? list : [];
-      return (
-        <>
-          {items.map((item, i) => (
-            <React.Fragment key={i}>
-              {node.children
-                .filter((c) => c.type !== 'Else')
-                .map((child, j) => (
-                  <React.Fragment key={j}>
-                    {renderNode(child, depth + 1, {
-                      ...ctx,
-                      resolver: (path) => {
-                        if (path.startsWith('item.')) {
-                          let cur: unknown = item;
-                          for (const part of path.slice(5).split('.')) {
-                            if (cur && typeof cur === 'object' && part in (cur as Record<string, unknown>)) {
-                              cur = (cur as Record<string, unknown>)[part];
-                            } else return undefined;
-                          }
-                          return cur;
-                        }
-                        return ctx.resolver(path);
-                      },
-                    })}
-                  </React.Fragment>
-                ))}
-            </React.Fragment>
-          ))}
-        </>
-      );
     }
 
     default: {
@@ -409,27 +391,25 @@ export function renderNode(node: Node, depth = 0, ctx: RenderCtx = { defs: new M
   }
 }
 
-/** Full preview component. */
-export function AuiPreview({
-  nodes,
-  defs = [],
-  imports = [],
-}: {
-  nodes: Node[];
-  defs?: ComponentDef[];
-  imports?: ImportDecl[];
-}) {
+/** Full preview component, fed the canonical IR. */
+export function AuiPreview({ doc }: { doc: CanonicalDocument }) {
   const ctx: RenderCtx = {
-    defs: new Map(defs.map((d) => [d.name, d])),
-    imported: new Set(imports.flatMap((i) => [...(i.defaultName ? [i.defaultName] : []), ...i.names])),
-    resolver: lookup,
+    defs: new Map((doc.components ?? []).map((d) => [d.name, d])),
+    // Registered third-party components (registry `imports` mapping) and
+    // explicit import names render as external frames.
+    external: new Set([
+      ...Object.entries(WWW_REGISTRY)
+        .filter(([, def]) => def.imports)
+        .map(([name]) => name),
+      ...(doc.imports ?? []).flatMap((i) => [...(i.defaultName ? [i.defaultName] : []), ...i.names]),
+    ]),
   };
   return (
     <div className="aui-preview">
-      {nodes.length === 0 ? (
+      {doc.rootNodes.length === 0 ? (
         <div className="aui-preview-empty">Nothing to render — write some .aui code.</div>
       ) : (
-        nodes.map((n, i) => <React.Fragment key={i}>{renderNode(n, 0, ctx)}</React.Fragment>)
+        doc.rootNodes.map((n, i) => <React.Fragment key={i}>{renderNode(n, ROOT_FRAMES, ctx)}</React.Fragment>)
       )}
     </div>
   );

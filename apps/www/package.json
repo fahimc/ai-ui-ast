@@ -9,10 +9,11 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "node --test --experimental-strip-types src/lib/render.test.ts",
-    "validate:tokens": "node --experimental-strip-types scripts/validate-tokens.ts"
+    "validate:tokens": "node --experimental-strip-types scripts/validate-tokens.ts",
+    "benchmark:llm": "node --experimental-strip-types scripts/benchmark/run-llm-benchmark.ts"
   },
   "dependencies": {
-    "@codedia/parser": "^0.1.0",
+    "@codedia/parser": "^0.2.0",
     "gpt-tokenizer": "^3.4.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"

@@ -4,6 +4,105 @@ All notable changes to AI UI AST are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/), and this project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] — 2026-08-08
+
+### Added — validated, deterministic v0.2 pipeline
+
+- **Typed raw AST** (`ast.ts`) — `RawValue` kinds (`string` / `binding` /
+  `number` / `boolean` / `bare`) replace string-typed props. `level=2` is a
+  number, `round=true` is a boolean, `label="$user.name"` is a literal
+  string, and `value=$user.name` is a binding — the compiler never guesses
+  semantics from strings.
+- **Canonical IR** (`normalize.ts`) — bare values are classified against the
+  registry (`token` / `list` / `string`), `If`/`Else` become explicit
+  `IfNode` with `then`/`else`, `For` becomes a `ForNode`, and def params
+  carry one unified `ComponentParam` model. Compilers and the website preview
+  consume the same IR.
+- **First-class validation** (`validate.ts`, `diagnostics.ts`) — moved from
+  the website into the package: registry checks, structural checks (orphan /
+  duplicate `Else`, `For` without a list), indentation validation (strict and
+  LLM-friendly modes), identifier validation, binding-path safety, resource
+  limits, and stable machine-readable diagnostic codes with line/column and
+  fix hints designed for LLM repair loops.
+- **Package-level registry** (`registry.ts`) — `defineRegistry`,
+  `extendRegistry`, `CORE_REGISTRY`, plus semantic event metadata
+  (`change=` → target handler + payload) and registry-owned third-party
+  imports. Strict compilation is **registry-only** by default; explicit
+  imports require an allowlist or `unsafeImports` compat mode.
+- **High-level API** (`compile.ts`) — `compile(source, { strict: true })`
+  runs parse → validate → normalize → compile and refuses to emit code when
+  error-level diagnostics exist.
+- **Compiler correctness fixes** (`react.ts`) — one shared
+  `renderJsxChildren` helper guarantees valid TSX for every expression
+  context (multi-child `If`/`Else`/`For`/def/document roots now wrap in
+  fragments); loops emit deterministic `key`s; `Page data=` is consumed as a
+  contract instead of a passthrough prop; numeric/boolean/list props emit
+  typed JSX; registry-derived imports are deterministic and deduplicated;
+  `$root.` absolute bindings; every golden fixture passes a TSX transpile
+  gate.
+- **Semantic events** — `change=emailChanged` on Input/Select/Checkbox/Switch
+  compiles to `onChange={(e) => onAction("emailChanged", e.target.value)}`
+  (or `target.checked`) through registry metadata. Form examples now express
+  the same behavior as their hand-written React baselines.
+- **Canonical printer** (`print.ts`) — `printAui()` with a tested semantic
+  round-trip invariant.
+- **Lexer hardening** — quote-aware `#` comment stripping (hex colours and
+  `#` inside strings survive), typed value classification, import alias /
+  namespace rejection with repairable diagnostics, indentation metadata.
+- **State** — `State` is now reported as reserved/not-yet-supported instead
+  of being advertised as implemented.
+- **Tests** — 79 unit tests (up from 19) across lexer, parser, validator,
+  normalizer, compiler (with TSX gate), printer, and the high-level API.
+
+### Changed — token methodology
+
+- Tokenizer encodings are **pinned explicitly** (`o200k_base` primary,
+  `cl100k_base` legacy) and named in `token-report.json`; the silent chars/4
+  approximation fallback was removed from the benchmark path.
+- Every gallery scenario carries a machine-readable **feature contract**
+  (render / bindings / actions / events); the validator fails if a declared
+  feature is missing from either implementation, so `.aui` is only compared
+  against functionally equivalent React.
+- Generated TSX runs through a transpile gate in the validator; every
+  scenario must pass the strict package pipeline.
+- **Instruction-overhead accounting** — cold (full AUI skill charged per
+  request) vs warm (amortized to 0) are recorded in the report and shown on
+  the site.
+- Regenerated numbers: **1,140 tokens saved (`o200k_base`) — 50% fewer,
+  2.0× smaller than hand-written React** (1,128 / 50% / 2.0× under
+  `cl100k_base`).
+
+### Added — LLM generation benchmark
+
+- `apps/www/scripts/benchmark/` — a versioned corpus of **36 UI briefs** with
+  functional contracts, deterministic fixture mode (CI-safe, runs without API
+  keys), opt-in live mode via `OPENAI_API_KEY` / `ANTHROPIC_API_KEY`, and
+  metrics for output tokens (both encodings), first-pass parse/validation/
+  TSX success, repair turns, completion, contract pass rate, and estimated
+  cost. Failures are retained and scored.
+- `npm run benchmark:llm -w www`.
+
+### Changed — website (`apps/www`)
+
+- The playground now calls the package `compile()` pipeline; the preview
+  renders the **canonical IR** with the package's shared binding-scope model.
+  Duplicate language validation was removed from `apps/www`.
+- Gallery scenarios use registry-owned chart imports (no `import` lines) and
+  declare feature contracts; the business-logic form uses `change=` events.
+- The Examples page reports both tokenizer encodings and instruction
+  overhead.
+
+### Changed — breaking AST/API (migration notes)
+
+- `Document` → `RawDocument`; `Node` → `RawNode`; `Prop.value` is now a typed
+  `RawValue`, not a string.
+- `ComponentDef.params` is `ComponentParam[]` (`{ name, defaultValue?,
+  required }`); `defaultProps` was removed.
+- `validate` / `normalize` / `compile` / `printAui` / `defineRegistry` were
+  added; `compileReact` still accepts raw documents for migration but new code
+  should use `compile(source, { strict: true })`.
+- See `docs/api.md` → Migration from v0.1.
+
 ## [0.1.1] — 2026-08-08
 
 ### Changed — positioning

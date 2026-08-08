@@ -123,9 +123,9 @@ export function Account({ data, onAction }: { data: any; onAction: (name: string
 
   business: `import { Alert, Button, Card, Checkbox, Divider, Heading, Input, Row, Stack, Text } from '@/components/ui';
 
-export function Checkout({ data, onAction }: { data: any; onAction: (name: string) => void }) {
-  const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    onAction(field + ':' + e.target.value);
+export function Checkout({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {
+  const handleChange = (name: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    onAction(name, e.target.value);
 
   return (
     <div className="page">
@@ -135,13 +135,15 @@ export function Checkout({ data, onAction }: { data: any; onAction: (name: strin
           <Text tone="muted">One-time payment · Pro plan</Text>
           <Divider />
           <Stack gap="md">
-            <Input type="email" placeholder="Email" value={data.form.email} onChange={handleChange('email')} />
-            <Input type="text" placeholder="Card number" value={data.form.card} onChange={handleChange('card')} />
+            <Input type="email" placeholder="Email" value={data.form.email} onChange={handleChange('emailChanged')} />
+            <Input type="text" placeholder="Card number" value={data.form.card} onChange={handleChange('cardChanged')} />
             <Row gap="md">
-              <Input type="text" placeholder="MM / YY" value={data.form.expiry} onChange={handleChange('expiry')} />
-              <Input type="text" placeholder="CVC" value={data.form.cvc} onChange={handleChange('cvc')} />
+              <Input type="text" placeholder="MM / YY" value={data.form.expiry} onChange={handleChange('expiryChanged')} />
+              <Input type="text" placeholder="CVC" value={data.form.cvc} onChange={handleChange('cvcChanged')} />
             </Row>
-            <Checkbox checked={data.form.remember}>Save card for next time</Checkbox>
+            <Checkbox checked={data.form.remember} onChange={(e) => onAction('rememberChanged', e.target.checked)}>
+              Save card for next time
+            </Checkbox>
           </Stack>
           <Alert tone="warning">Test mode — no real charge will be made.</Alert>
           <Button variant="primary" size="lg" onClick={() => onAction('pay')}>

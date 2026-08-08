@@ -1,0 +1,2536 @@
+{
+  "mode": "fixture",
+  "model": "gpt-4o",
+  "samplesPerBrief": 1,
+  "tokenizers": {
+    "o200k_base": "o200k_base (GPT-4o / GPT-4.1 family)",
+    "cl100k_base": "cl100k_base (GPT-3.5 / GPT-4 legacy)"
+  },
+  "instructionOverhead": {
+    "cold": {
+      "o200k_base": 1461,
+      "cl100k_base": 1476
+    },
+    "warm": {
+      "o200k_base": 0,
+      "cl100k_base": 0
+    }
+  },
+  "generatedAt": "2026-08-08T22:07:11.808Z",
+  "briefs": [
+    {
+      "briefId": "marketing-hero",
+      "title": "Marketing hero",
+      "category": "static",
+      "aui": {
+        "briefId": "marketing-hero",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page MarketingHero data=$user\n  Stack gap=md\n    Button variant=primary action=getStarted \"GetStarted\"\n    Stack gap=md\n    Heading level=2 \"Heading\"\n    Text \"Body text\"\n    Text \"Get started\"",
+        "promptTokens": {
+          "o200k_base": 243,
+          "cl100k_base": 245
+        },
+        "outputTokens": {
+          "o200k_base": 51,
+          "cl100k_base": 51
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0011175
+      },
+      "react": {
+        "briefId": "marketing-hero",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Button, Heading, Stack, Text } from '@/components/ui';\n\nexport function MarketingHero({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('getStarted')}>GetStarted</Button>\n      <Stack gap=\"md\" />\n      <Heading level={2}>Heading</Heading>\n      <Text>Body text</Text>\n      <Text>Get started</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 184,
+          "cl100k_base": 183
+        },
+        "outputTokens": {
+          "o200k_base": 123,
+          "cl100k_base": 122
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00169
+      }
+    },
+    {
+      "briefId": "marketing-pricing",
+      "title": "Pricing cards",
+      "category": "static",
+      "aui": {
+        "briefId": "marketing-pricing",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page PricingCards data=$user\n  Stack gap=md\n    Button variant=primary action=startStarter \"StartStarter\"\n    Button variant=primary action=startPro \"StartPro\"\n    Button variant=primary action=contactSales \"ContactSales\"\n    Grid min=240 gap=md\n    Card pad=lg\n    Badge tone=info \"Badge\"\n    Text \"Body text\"\n    Divider\n    Heading level=2 \"Heading\"\n    Text \"Enterprise\"",
+        "promptTokens": {
+          "o200k_base": 252,
+          "cl100k_base": 254
+        },
+        "outputTokens": {
+          "o200k_base": 95,
+          "cl100k_base": 97
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0015800000000000002
+      },
+      "react": {
+        "briefId": "marketing-pricing",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Badge, Button, Card, Divider, Grid, Heading, Text } from '@/components/ui';\n\nexport function PricingCards({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('startStarter')}>StartStarter</Button>\n      <Button variant=\"primary\" onClick={() => onAction('startPro')}>StartPro</Button>\n      <Button variant=\"primary\" onClick={() => onAction('contactSales')}>ContactSales</Button>\n      <Grid min={240} gap=\"md\" />\n      <Card pad=\"lg\" />\n      <Badge tone=\"info\">Badge</Badge>\n      <Text>Body text</Text>\n      <Divider />\n      <Heading level={2}>Heading</Heading>\n      <Text>Enterprise</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 193,
+          "cl100k_base": 192
+        },
+        "outputTokens": {
+          "o200k_base": 201,
+          "cl100k_base": 200
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0024925
+      }
+    },
+    {
+      "briefId": "marketing-feature",
+      "title": "Feature callout",
+      "category": "static",
+      "aui": {
+        "briefId": "marketing-feature",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page FeatureCallout data=$user\n  Stack gap=md\n    Card pad=lg\n    Icon name=home\n    Heading level=2 \"Heading\"\n    Text \"Body text\"",
+        "promptTokens": {
+          "o200k_base": 243,
+          "cl100k_base": 245
+        },
+        "outputTokens": {
+          "o200k_base": 40,
+          "cl100k_base": 40
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0010075
+      },
+      "react": {
+        "briefId": "marketing-feature",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Card, Heading, Icon, Text } from '@/components/ui';\n\nexport function FeatureCallout({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Card pad=\"lg\" />\n      <Icon name=\"home\" />\n      <Heading level={2}>Heading</Heading>\n      <Text>Body text</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 184,
+          "cl100k_base": 183
+        },
+        "outputTokens": {
+          "o200k_base": 100,
+          "cl100k_base": 100
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00146
+      }
+    },
+    {
+      "briefId": "dash-overview",
+      "title": "Overview dashboard",
+      "category": "dashboard",
+      "aui": {
+        "briefId": "dash-overview",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page OverviewDashboard data=$user\n  Stack gap=md\n    Button variant=primary action=refresh \"Refresh\"\n    Card pad=lg\n      Heading level=2 \"Trend\"\n      AreaChart data=$metrics.series height=240\n        Area dataKey=\"revenue\" stroke=\"#a78bfa\" fill=\"#a78bfa\"\n    Heading level=2 \"Heading\"\n    Grid min=240 gap=md\n    Card pad=lg\n    Metric label=\"Metric\" value=$user.name\n    Text $metrics.revenue\n    Text $metrics.users\n    Text $metrics.churn\n    Text \"Revenue\"\n    Text \"Users\"\n    Text \"Churn\"",
+        "promptTokens": {
+          "o200k_base": 257,
+          "cl100k_base": 259
+        },
+        "outputTokens": {
+          "o200k_base": 141,
+          "cl100k_base": 142
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0020525000000000005
+      },
+      "react": {
+        "briefId": "dash-overview",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Area, AreaChart, CartesianGrid, XAxis } from '@acme/charts';\nimport { Button, Card, Grid, Heading, Metric, Page } from '@/components/ui';\n\nexport function OverviewDashboard({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Page>\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('refresh')}>Refresh</Button>\n      <AreaChart data={data.metrics.series} height={240}>\n        <Area dataKey=\"revenue\" stroke=\"#a78bfa\" fill=\"#a78bfa\" />\n      </AreaChart>\n      <Page />\n      <Heading level={2}>Heading</Heading>\n      <Grid min={240} gap=\"md\" />\n      <Card pad=\"lg\" />\n      <Metric label=\"Metric\" value={data.user.name} />\n      <Text>{data.metrics.revenue}</Text>\n      <Text>{data.metrics.users}</Text>\n      <Text>{data.metrics.churn}</Text>\n      <Text>Revenue</Text>\n      <Text>Users</Text>\n      <Text>Churn</Text>\n    </Stack>\n    </Page>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 198,
+          "cl100k_base": 197
+        },
+        "outputTokens": {
+          "o200k_base": 265,
+          "cl100k_base": 264
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0031450000000000002
+      }
+    },
+    {
+      "briefId": "dash-kpis",
+      "title": "KPI band",
+      "category": "dashboard",
+      "aui": {
+        "briefId": "dash-kpis",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page KPIBand data=$user\n  Stack gap=md\n    Row gap=md align=center\n    Card pad=lg\n    Metric label=\"Metric\" value=$user.name\n    Text \"Body text\"\n    Text $metrics.active\n    Text $metrics.signups\n    Text $metrics.churn",
+        "promptTokens": {
+          "o200k_base": 243,
+          "cl100k_base": 245
+        },
+        "outputTokens": {
+          "o200k_base": 63,
+          "cl100k_base": 64
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0012374999999999999
+      },
+      "react": {
+        "briefId": "dash-kpis",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Card, Metric, Row, Text } from '@/components/ui';\n\nexport function KPIBand({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Row gap=\"md\" align=\"center\" />\n      <Card pad=\"lg\" />\n      <Metric label=\"Metric\" value={data.user.name} />\n      <Text>Body text</Text>\n      <Text>{data.metrics.active}</Text>\n      <Text>{data.metrics.signups}</Text>\n      <Text>{data.metrics.churn}</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 184,
+          "cl100k_base": 183
+        },
+        "outputTokens": {
+          "o200k_base": 138,
+          "cl100k_base": 139
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00184
+      }
+    },
+    {
+      "briefId": "dash-status",
+      "title": "Status dashboard",
+      "category": "dashboard",
+      "aui": {
+        "briefId": "dash-status",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page StatusDashboard data=$user\n  Stack gap=md\n    For each=$items\n      Row gap=md align=center\n        Avatar label=$item.name\n        Text $item.name\n        Badge tone=info $item.status\n    Badge tone=info \"Badge\"\n    Spinner size=md\n    Row gap=md align=center\n    Avatar label=$user.name\n    Text \"Body text\"\n    Text \"Live\"",
+        "promptTokens": {
+          "o200k_base": 244,
+          "cl100k_base": 246
+        },
+        "outputTokens": {
+          "o200k_base": 89,
+          "cl100k_base": 89
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0015
+      },
+      "react": {
+        "briefId": "dash-status",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Avatar, Badge, Page, Row, Spinner, Text } from '@/components/ui';\n\nexport function StatusDashboard({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Page>\n    <Stack gap=\"md\">\n      {data.items.map((item) => (\n        <Row key={item.id} gap=\"md\" align=\"center\">\n          <Avatar label={item.name} />\n          <Text>{item.name}</Text>\n          <Badge tone=\"info\">{item.status}</Badge>\n        </Row>\n      ))}\n      <Page />\n      <Badge tone=\"info\">Badge</Badge>\n      <Spinner size=\"md\" />\n      <Row gap=\"md\" align=\"center\" />\n      <Avatar label={data.user.name} />\n      <Text>Body text</Text>\n      <Text>Live</Text>\n    </Stack>\n    </Page>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 185,
+          "cl100k_base": 184
+        },
+        "outputTokens": {
+          "o200k_base": 199,
+          "cl100k_base": 199
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0024525
+      }
+    },
+    {
+      "briefId": "form-signin",
+      "title": "Sign-in form",
+      "category": "form",
+      "aui": {
+        "briefId": "form-signin",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page SignInForm data=$user\n  Stack gap=md\n    Button variant=primary action=signIn \"SignIn\"\n    Input type=text placeholder=\"Field 1\" value=$form.field0 change=emailChanged\n    Input type=text placeholder=\"Field 2\" value=$form.field1 change=passwordChanged\n    Input type=text placeholder=\"Field 3\" value=$form.field2 change=rememberChanged\n    Card pad=lg\n    Stack gap=md\n    Checkbox checked=$form.remember \"Remember me\"\n    Heading level=2 \"Heading\"\n    Text \"Body text\"\n    Text $form.email\n    Text $form.password\n    Text \"Keep me signed in\"\n    Text \"Sign in\"",
+        "promptTokens": {
+          "o200k_base": 251,
+          "cl100k_base": 253
+        },
+        "outputTokens": {
+          "o200k_base": 148,
+          "cl100k_base": 145
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0021075
+      },
+      "react": {
+        "briefId": "form-signin",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Button, Card, Checkbox, Heading, Input, Stack, Text } from '@/components/ui';\n\nexport function SignInForm({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('signIn')}>SignIn</Button>\n      <Input placeholder=\"Field 1\" value={data.form.field0} onChange={(e) => onAction('emailChanged', e.target.value)} />\n      <Input placeholder=\"Field 2\" value={data.form.field1} onChange={(e) => onAction('passwordChanged', e.target.value)} />\n      <Input placeholder=\"Field 3\" value={data.form.field2} onChange={(e) => onAction('rememberChanged', e.target.value)} />\n      <Card pad=\"lg\" />\n      <Stack gap=\"md\" />\n      <Checkbox checked={data.form.remember}>Remember me</Checkbox>\n      <Heading level={2}>Heading</Heading>\n      <Text>Body text</Text>\n      <Text>{data.form.email}</Text>\n      <Text>{data.form.password}</Text>\n      <Text>Keep me signed in</Text>\n      <Text>Sign in</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 192,
+          "cl100k_base": 191
+        },
+        "outputTokens": {
+          "o200k_base": 283,
+          "cl100k_base": 276
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00331
+      }
+    },
+    {
+      "briefId": "form-checkout",
+      "title": "Checkout form",
+      "category": "form",
+      "aui": {
+        "briefId": "form-checkout",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page CheckoutForm data=$user\n  Stack gap=md\n    Button variant=primary action=pay \"Pay\"\n    Input type=text placeholder=\"Field 1\" value=$form.field0 change=emailChanged\n    Input type=text placeholder=\"Field 2\" value=$form.field1 change=cardChanged\n    Input type=text placeholder=\"Field 3\" value=$form.field2 change=expiryChanged\n    Input type=text placeholder=\"Field 4\" value=$form.field3 change=cvcChanged\n    Input type=text placeholder=\"Field 5\" value=$form.field4 change=rememberChanged\n    Card pad=lg\n    Stack gap=md\n    Row gap=md align=center\n    Checkbox checked=$form.remember \"Remember me\"\n    Alert tone=info \"Alert\"\n    Divider\n    Heading level=2 \"Heading\"\n    Text $form.email\n    Text $form.card\n    Text $form.expiry\n    Text $form.cvc\n    Text \"Pay $129.00\"",
+        "promptTokens": {
+          "o200k_base": 267,
+          "cl100k_base": 269
+        },
+        "outputTokens": {
+          "o200k_base": 208,
+          "cl100k_base": 208
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0027475
+      },
+      "react": {
+        "briefId": "form-checkout",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Alert, Button, Card, Checkbox, Divider, Heading, Input, Row, Stack } from '@/components/ui';\n\nexport function CheckoutForm({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('pay')}>Pay</Button>\n      <Input placeholder=\"Field 1\" value={data.form.field0} onChange={(e) => onAction('emailChanged', e.target.value)} />\n      <Input placeholder=\"Field 2\" value={data.form.field1} onChange={(e) => onAction('cardChanged', e.target.value)} />\n      <Input placeholder=\"Field 3\" value={data.form.field2} onChange={(e) => onAction('expiryChanged', e.target.value)} />\n      <Input placeholder=\"Field 4\" value={data.form.field3} onChange={(e) => onAction('cvcChanged', e.target.value)} />\n      <Input placeholder=\"Field 5\" value={data.form.field4} onChange={(e) => onAction('rememberChanged', e.target.value)} />\n      <Card pad=\"lg\" />\n      <Stack gap=\"md\" />\n      <Row gap=\"md\" align=\"center\" />\n      <Checkbox checked={data.form.remember}>Remember me</Checkbox>\n      <Alert tone=\"info\">Alert</Alert>\n      <Divider />\n      <Heading level={2}>Heading</Heading>\n      <Text>{data.form.email}</Text>\n      <Text>{data.form.card}</Text>\n      <Text>{data.form.expiry}</Text>\n      <Text>{data.form.cvc}</Text>\n      <Text>Pay $129.00</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 208,
+          "cl100k_base": 207
+        },
+        "outputTokens": {
+          "o200k_base": 383,
+          "cl100k_base": 377
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00435
+      }
+    },
+    {
+      "briefId": "form-signup",
+      "title": "Sign-up form",
+      "category": "form",
+      "aui": {
+        "briefId": "form-signup",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page SignUpForm data=$user\n  Stack gap=md\n    Button variant=primary action=submit \"Submit\"\n    Input type=text placeholder=\"Field 1\" value=$form.field0 change=nameChanged\n    Input type=text placeholder=\"Field 2\" value=$form.field1 change=emailChanged\n    Input type=text placeholder=\"Field 3\" value=$form.field2 change=planChanged\n    Card pad=lg\n    Stack gap=md\n    Select value=$form.plan options=\"Free,Pro,Team\"\n    Alert tone=info \"Alert\"\n    Heading level=2 \"Heading\"\n    Text $form.name\n    Text $form.email",
+        "promptTokens": {
+          "o200k_base": 248,
+          "cl100k_base": 250
+        },
+        "outputTokens": {
+          "o200k_base": 136,
+          "cl100k_base": 135
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00198
+      },
+      "react": {
+        "briefId": "form-signup",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Alert, Button, Card, Heading, Input, Select, Stack } from '@/components/ui';\n\nexport function SignUpForm({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('submit')}>Submit</Button>\n      <Input placeholder=\"Field 1\" value={data.form.field0} onChange={(e) => onAction('nameChanged', e.target.value)} />\n      <Input placeholder=\"Field 2\" value={data.form.field1} onChange={(e) => onAction('emailChanged', e.target.value)} />\n      <Input placeholder=\"Field 3\" value={data.form.field2} onChange={(e) => onAction('planChanged', e.target.value)} />\n      <Card pad=\"lg\" />\n      <Stack gap=\"md\" />\n      <Select value={data.form.plan} />\n      <Alert tone=\"info\">Alert</Alert>\n      <Heading level={2}>Heading</Heading>\n      <Text>{data.form.name}</Text>\n      <Text>{data.form.email}</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 189,
+          "cl100k_base": 188
+        },
+        "outputTokens": {
+          "o200k_base": 258,
+          "cl100k_base": 253
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0030524999999999997
+      }
+    },
+    {
+      "briefId": "settings-notif",
+      "title": "Notification settings",
+      "category": "settings",
+      "aui": {
+        "briefId": "settings-notif",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page NotificationSettings data=$user\n  Stack gap=md\n    Button variant=primary action=save \"Save\"\n    Input type=text placeholder=\"Field 1\" value=$form.field0 change=emailToggled\n    Input type=text placeholder=\"Field 2\" value=$form.field1 change=pushToggled\n    Card pad=lg\n    Stack gap=md\n    Switch checked=$prefs.email \"Toggle\"\n    Alert tone=info \"Alert\"\n    Heading level=2 \"Heading\"\n    Text $prefs.push\n    Text \"Email notifications\"\n    Text \"Push notifications\"",
+        "promptTokens": {
+          "o200k_base": 241,
+          "cl100k_base": 243
+        },
+        "outputTokens": {
+          "o200k_base": 120,
+          "cl100k_base": 120
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0018025
+      },
+      "react": {
+        "briefId": "settings-notif",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Alert, Button, Card, Heading, Page, Stack, Switch } from '@/components/ui';\n\nexport function NotificationSettings({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Page>\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('save')}>Save</Button>\n      <Input placeholder=\"Field 1\" value={data.form.field0} onChange={(e) => onAction('emailToggled', e.target.value)} />\n      <Input placeholder=\"Field 2\" value={data.form.field1} onChange={(e) => onAction('pushToggled', e.target.value)} />\n      <Page />\n      <Card pad=\"lg\" />\n      <Stack gap=\"md\" />\n      <Alert tone=\"info\">Alert</Alert>\n      <Heading level={2}>Heading</Heading>\n      <Text>{data.prefs.email}</Text>\n      <Text>{data.prefs.push}</Text>\n      <Text>Email notifications</Text>\n      <Text>Push notifications</Text>\n    </Stack>\n    </Page>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 182,
+          "cl100k_base": 181
+        },
+        "outputTokens": {
+          "o200k_base": 247,
+          "cl100k_base": 244
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.002925
+      }
+    },
+    {
+      "briefId": "settings-plan",
+      "title": "Plan settings",
+      "category": "settings",
+      "aui": {
+        "briefId": "settings-plan",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page PlanSettings data=$user\n  Stack gap=md\n    Button variant=primary action=changePlan \"ChangePlan\"\n    Button variant=primary action=delete \"Delete\"\n    Input type=text placeholder=\"Field 1\" value=$form.field0 change=planChanged\n    Card pad=lg\n    Stack gap=md\n    Select value=$form.plan options=\"Free,Pro,Team\"\n    Text \"Body text\"\n    Heading level=2 \"Heading\"\n    Divider\n    Text $customer.plan\n    Text \"Danger zone\"",
+        "promptTokens": {
+          "o200k_base": 246,
+          "cl100k_base": 248
+        },
+        "outputTokens": {
+          "o200k_base": 112,
+          "cl100k_base": 112
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.001735
+      },
+      "react": {
+        "briefId": "settings-plan",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Button, Card, Divider, Heading, Page, Select, Stack, Text } from '@/components/ui';\n\nexport function PlanSettings({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Page>\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('changePlan')}>ChangePlan</Button>\n      <Button variant=\"primary\" onClick={() => onAction('delete')}>Delete</Button>\n      <Input placeholder=\"Field 1\" value={data.form.field0} onChange={(e) => onAction('planChanged', e.target.value)} />\n      <Page />\n      <Card pad=\"lg\" />\n      <Stack gap=\"md\" />\n      <Select value={data.form.plan} />\n      <Text>Body text</Text>\n      <Heading level={2}>Heading</Heading>\n      <Divider />\n      <Text>{data.customer.plan}</Text>\n      <Text>Danger zone</Text>\n    </Stack>\n    </Page>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 187,
+          "cl100k_base": 186
+        },
+        "outputTokens": {
+          "o200k_base": 229,
+          "cl100k_base": 226
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0027575
+      }
+    },
+    {
+      "briefId": "settings-profile",
+      "title": "Profile settings",
+      "category": "settings",
+      "aui": {
+        "briefId": "settings-profile",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page ProfileSettings data=$user\n  Stack gap=md\n    Button variant=primary action=save \"Save\"\n    Button variant=primary action=cancel \"Cancel\"\n    Card pad=lg\n    Stack gap=md\n    Avatar label=$user.name\n    Field label=\"Field\" value=$user.name\n    Row gap=md align=center\n    Heading level=2 \"Heading\"\n    Text $customer.name\n    Text $customer.email",
+        "promptTokens": {
+          "o200k_base": 245,
+          "cl100k_base": 247
+        },
+        "outputTokens": {
+          "o200k_base": 92,
+          "cl100k_base": 92
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0015325
+      },
+      "react": {
+        "briefId": "settings-profile",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Avatar, Button, Card, Field, Heading, Page, Row, Stack } from '@/components/ui';\n\nexport function ProfileSettings({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Page>\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('save')}>Save</Button>\n      <Button variant=\"primary\" onClick={() => onAction('cancel')}>Cancel</Button>\n      <Page />\n      <Card pad=\"lg\" />\n      <Stack gap=\"md\" />\n      <Avatar label={data.user.name} />\n      <Field label=\"Field\" value={data.user.name} />\n      <Row gap=\"md\" align=\"center\" />\n      <Heading level={2}>Heading</Heading>\n      <Text>{data.customer.name}</Text>\n      <Text>{data.customer.email}</Text>\n    </Stack>\n    </Page>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 186,
+          "cl100k_base": 185
+        },
+        "outputTokens": {
+          "o200k_base": 208,
+          "cl100k_base": 206
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.002545
+      }
+    },
+    {
+      "briefId": "list-projects",
+      "title": "Project list",
+      "category": "list",
+      "aui": {
+        "briefId": "list-projects",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page ProjectList data=$user\n  Stack gap=md\n    For each=$projects\n      Row gap=md align=center\n        Avatar label=$item.name\n        Text $item.name\n        Badge tone=info $item.status\n    Section\n    Heading level=2 \"Heading\"\n    Card pad=lg\n    Text \"Body text\"\n    Badge tone=info \"Badge\"",
+        "promptTokens": {
+          "o200k_base": 245,
+          "cl100k_base": 247
+        },
+        "outputTokens": {
+          "o200k_base": 80,
+          "cl100k_base": 80
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0014125000000000001
+      },
+      "react": {
+        "briefId": "list-projects",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Badge, Card, Heading, Page, Section, Text } from '@/components/ui';\n\nexport function ProjectList({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Page>\n    <Stack gap=\"md\">\n      {data.projects.map((item) => (\n        <Row key={item.id} gap=\"md\" align=\"center\">\n          <Avatar label={item.name} />\n          <Text>{item.name}</Text>\n          <Badge tone=\"info\">{item.status}</Badge>\n        </Row>\n      ))}\n      <Page />\n      <Section />\n      <Heading level={2}>Heading</Heading>\n      <Card pad=\"lg\" />\n      <Text>Body text</Text>\n      <Badge tone=\"info\">Badge</Badge>\n    </Stack>\n    </Page>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 186,
+          "cl100k_base": 185
+        },
+        "outputTokens": {
+          "o200k_base": 184,
+          "cl100k_base": 184
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.002305
+      }
+    },
+    {
+      "briefId": "list-teams",
+      "title": "Team roster",
+      "category": "list",
+      "aui": {
+        "briefId": "list-teams",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page TeamRoster data=$user\n  Stack gap=md\n    For each=$members\n      Row gap=md align=center\n        Avatar label=$item.name\n        Text $item.name\n        Badge tone=info $item.status\n    Card pad=lg\n    Row gap=md align=center\n    Avatar label=$user.name\n    Text \"Body text\"\n    Badge tone=info \"Badge\"\n    Divider",
+        "promptTokens": {
+          "o200k_base": 243,
+          "cl100k_base": 245
+        },
+        "outputTokens": {
+          "o200k_base": 86,
+          "cl100k_base": 87
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0014675
+      },
+      "react": {
+        "briefId": "list-teams",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Avatar, Badge, Card, Divider, Row, Text } from '@/components/ui';\n\nexport function TeamRoster({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      {data.members.map((item) => (\n        <Row key={item.id} gap=\"md\" align=\"center\">\n          <Avatar label={item.name} />\n          <Text>{item.name}</Text>\n          <Badge tone=\"info\">{item.status}</Badge>\n        </Row>\n      ))}\n      <Card pad=\"lg\" />\n      <Row gap=\"md\" align=\"center\" />\n      <Avatar label={data.user.name} />\n      <Text>Body text</Text>\n      <Badge tone=\"info\">Badge</Badge>\n      <Divider />\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 184,
+          "cl100k_base": 183
+        },
+        "outputTokens": {
+          "o200k_base": 183,
+          "cl100k_base": 184
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00229
+      }
+    },
+    {
+      "briefId": "table-invoices",
+      "title": "Invoice list",
+      "category": "list",
+      "aui": {
+        "briefId": "table-invoices",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page InvoiceList data=$user\n  Stack gap=md\n    For each=$invoices\n      Row gap=md align=center\n        Avatar label=$item.name\n        Text $item.name\n        Badge tone=info $item.status\n    Row gap=md align=center\n    Text \"Body text\"\n    Badge tone=info \"Badge\"\n    Alert tone=info \"Alert\"",
+        "promptTokens": {
+          "o200k_base": 252,
+          "cl100k_base": 254
+        },
+        "outputTokens": {
+          "o200k_base": 80,
+          "cl100k_base": 79
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00143
+      },
+      "react": {
+        "briefId": "table-invoices",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Alert, Badge, Row, Text } from '@/components/ui';\n\nexport function InvoiceList({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      {data.invoices.map((item) => (\n        <Row key={item.id} gap=\"md\" align=\"center\">\n          <Avatar label={item.name} />\n          <Text>{item.name}</Text>\n          <Badge tone=\"info\">{item.status}</Badge>\n        </Row>\n      ))}\n      <Row gap=\"md\" align=\"center\" />\n      <Text>Body text</Text>\n      <Badge tone=\"info\">Badge</Badge>\n      <Alert tone=\"info\">Alert</Alert>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 193,
+          "cl100k_base": 192
+        },
+        "outputTokens": {
+          "o200k_base": 169,
+          "cl100k_base": 169
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0021725
+      }
+    },
+    {
+      "briefId": "cond-admin",
+      "title": "Role-based admin panel",
+      "category": "conditional",
+      "aui": {
+        "briefId": "cond-admin",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page RoleBasedAdminPanel data=$user\n  Stack gap=md\n    Button variant=primary action=cancel \"Cancel\"\n    Input type=text placeholder=\"Field 1\" value=$form.field0 change=alertsToggled\n    If condition=$user.loggedIn\n      Card pad=lg\n        Stack gap=md\n          Heading level=2 \"Member\"\n          Text tone=muted \"Signed in\"\n        Switch checked=$prefs.alerts \"Alerts\"\n      AreaChart data=$metrics.series height=180\n    Else\n      Card pad=lg\n        Stack gap=md\n          Heading level=2 \"Guest\"\n          Text tone=muted \"Signed out\"\n    Card pad=lg\n      Heading level=2 \"Trend\"\n      AreaChart data=$metrics.series height=240\n    Card pad=lg\n    Heading level=2 \"Heading\"\n    Stack gap=md\n    Text $user.role\n    Text \"Admin controls\"",
+        "promptTokens": {
+          "o200k_base": 245,
+          "cl100k_base": 247
+        },
+        "outputTokens": {
+          "o200k_base": 196,
+          "cl100k_base": 195
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0025725
+      },
+      "react": {
+        "briefId": "cond-admin",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Area, AreaChart, CartesianGrid, XAxis } from '@acme/charts';\nimport { Button, Card, Heading, Stack, Switch } from '@/components/ui';\n\nexport function RoleBasedAdminPanel({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('cancel')}>Cancel</Button>\n      <Input placeholder=\"Field 1\" value={data.form.field0} onChange={(e) => onAction('alertsToggled', e.target.value)} />\n      <AreaChart data={data.metrics.series} height={240}>\n      </AreaChart>\n      <Card pad=\"lg\" />\n      <Heading level={2}>Heading</Heading>\n      <Stack gap=\"md\" />\n      <Text>{data.user.role}</Text>\n      <Text>{data.prefs.alerts}</Text>\n      <Text>Admin controls</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 186,
+          "cl100k_base": 185
+        },
+        "outputTokens": {
+          "o200k_base": 219,
+          "cl100k_base": 217
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0026550000000000002
+      }
+    },
+    {
+      "briefId": "cond-auth",
+      "title": "Signed-in vs signed-out",
+      "category": "conditional",
+      "aui": {
+        "briefId": "cond-auth",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page SignedInVsSignedOut data=$user\n  Stack gap=md\n    Button variant=primary action=signOut \"SignOut\"\n    Button variant=primary action=signIn \"SignIn\"\n    If condition=$user.loggedIn\n      Card pad=lg\n        Stack gap=md\n          Heading level=2 \"Member\"\n          Text tone=muted \"Signed in\"\n    Else\n      Card pad=lg\n        Stack gap=md\n          Heading level=2 \"Guest\"\n          Text tone=muted \"Signed out\"\n    Avatar label=$user.name\n    Badge tone=info \"Badge\"\n    Heading level=2 \"Heading\"\n    Text \"Body text\"",
+        "promptTokens": {
+          "o200k_base": 244,
+          "cl100k_base": 246
+        },
+        "outputTokens": {
+          "o200k_base": 142,
+          "cl100k_base": 137
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00203
+      },
+      "react": {
+        "briefId": "cond-auth",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Avatar, Badge, Button, Heading, Text } from '@/components/ui';\n\nexport function SignedInVsSignedOut({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('signOut')}>SignOut</Button>\n      <Button variant=\"primary\" onClick={() => onAction('signIn')}>SignIn</Button>\n      <Avatar label={data.user.name} />\n      <Badge tone=\"info\">Badge</Badge>\n      <Heading level={2}>Heading</Heading>\n      <Text>Body text</Text>\n      <Text>{data.user.loggedIn}</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 185,
+          "cl100k_base": 184
+        },
+        "outputTokens": {
+          "o200k_base": 166,
+          "cl100k_base": 161
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0021225000000000003
+      }
+    },
+    {
+      "briefId": "cond-promo",
+      "title": "Conditional promo",
+      "category": "conditional",
+      "aui": {
+        "briefId": "cond-promo",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page ConditionalPromo data=$user\n  Stack gap=md\n    Button variant=primary action=upgrade \"Upgrade\"\n    If condition=$user.loggedIn\n      Card pad=lg\n        Stack gap=md\n          Heading level=2 \"Member\"\n          Text tone=muted \"Signed in\"\n    Else\n      Card pad=lg\n        Stack gap=md\n          Heading level=2 \"Guest\"\n          Text tone=muted \"Signed out\"\n    Alert tone=info \"Alert\"\n    Text \"Body text\"\n    Text $user.discount",
+        "promptTokens": {
+          "o200k_base": 245,
+          "cl100k_base": 247
+        },
+        "outputTokens": {
+          "o200k_base": 114,
+          "cl100k_base": 112
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0017525
+      },
+      "react": {
+        "briefId": "cond-promo",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Alert, Button, Text } from '@/components/ui';\n\nexport function ConditionalPromo({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('upgrade')}>Upgrade</Button>\n      <Alert tone=\"info\">Alert</Alert>\n      <Text>Body text</Text>\n      <Text>{data.user.discount}</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 186,
+          "cl100k_base": 185
+        },
+        "outputTokens": {
+          "o200k_base": 112,
+          "cl100k_base": 112
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0015849999999999998
+      }
+    },
+    {
+      "briefId": "state-empty",
+      "title": "Empty state",
+      "category": "states",
+      "aui": {
+        "briefId": "state-empty",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page EmptyState data=$user\n  Stack gap=md\n    Button variant=primary action=createFirst \"CreateFirst\"\n    Stack gap=md\n    Icon name=home\n    Heading level=2 \"Heading\"\n    Text \"Body text\"\n    Text \"No items yet\"",
+        "promptTokens": {
+          "o200k_base": 246,
+          "cl100k_base": 248
+        },
+        "outputTokens": {
+          "o200k_base": 58,
+          "cl100k_base": 58
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.001195
+      },
+      "react": {
+        "briefId": "state-empty",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Button, Heading, Icon, Stack, Text } from '@/components/ui';\n\nexport function EmptyState({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('createFirst')}>CreateFirst</Button>\n      <Stack gap=\"md\" />\n      <Icon name=\"home\" />\n      <Heading level={2}>Heading</Heading>\n      <Text>Body text</Text>\n      <Text>No items yet</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 187,
+          "cl100k_base": 186
+        },
+        "outputTokens": {
+          "o200k_base": 133,
+          "cl100k_base": 132
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0017975
+      }
+    },
+    {
+      "briefId": "state-loading",
+      "title": "Loading state",
+      "category": "states",
+      "aui": {
+        "briefId": "state-loading",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page LoadingState data=$user\n  Stack gap=md\n    If condition=$user.loggedIn\n      Card pad=lg\n        Stack gap=md\n          Heading level=2 \"Member\"\n          Text tone=muted \"Signed in\"\n    Else\n      Card pad=lg\n        Stack gap=md\n          Heading level=2 \"Guest\"\n          Text tone=muted \"Signed out\"\n    Spinner size=md\n    Text \"Body text\"\n    Card pad=lg\n    Text $query.loading",
+        "promptTokens": {
+          "o200k_base": 244,
+          "cl100k_base": 246
+        },
+        "outputTokens": {
+          "o200k_base": 107,
+          "cl100k_base": 104
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00168
+      },
+      "react": {
+        "briefId": "state-loading",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Card, Spinner, Text } from '@/components/ui';\n\nexport function LoadingState({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Spinner size=\"md\" />\n      <Text>Body text</Text>\n      <Card pad=\"lg\" />\n      <Text>{data.query.loading}</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 185,
+          "cl100k_base": 184
+        },
+        "outputTokens": {
+          "o200k_base": 96,
+          "cl100k_base": 96
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0014225000000000002
+      }
+    },
+    {
+      "briefId": "state-error",
+      "title": "Error state",
+      "category": "states",
+      "aui": {
+        "briefId": "state-error",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page ErrorState data=$user\n  Stack gap=md\n    Button variant=primary action=retry \"Retry\"\n    If condition=$user.loggedIn\n      Card pad=lg\n        Stack gap=md\n          Heading level=2 \"Member\"\n          Text tone=muted \"Signed in\"\n    Else\n      Card pad=lg\n        Stack gap=md\n          Heading level=2 \"Guest\"\n          Text tone=muted \"Signed out\"\n    Alert tone=info \"Alert\"\n    Card pad=lg\n    Text $query.error\n    Text \"Something went wrong\"",
+        "promptTokens": {
+          "o200k_base": 239,
+          "cl100k_base": 241
+        },
+        "outputTokens": {
+          "o200k_base": 122,
+          "cl100k_base": 119
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0018175
+      },
+      "react": {
+        "briefId": "state-error",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Alert, Button, Card } from '@/components/ui';\n\nexport function ErrorState({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('retry')}>Retry</Button>\n      <Alert tone=\"info\">Alert</Alert>\n      <Card pad=\"lg\" />\n      <Text>{data.query.error}</Text>\n      <Text>Something went wrong</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 180,
+          "cl100k_base": 179
+        },
+        "outputTokens": {
+          "o200k_base": 121,
+          "cl100k_base": 120
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00166
+      }
+    },
+    {
+      "briefId": "nested-sections",
+      "title": "Sections of items",
+      "category": "nested-loops",
+      "aui": {
+        "briefId": "nested-sections",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page SectionsOfItems data=$user\n  Stack gap=md\n    For each=$sections\n      Row gap=md align=center\n        Avatar label=$item.name\n        Text $item.name\n        Badge tone=info $item.status\n    Section\n    Heading level=2 \"Heading\"\n    Card pad=lg\n    Row gap=md align=center\n    Text \"Body text\"\n    Badge tone=info \"Badge\"",
+        "promptTokens": {
+          "o200k_base": 238,
+          "cl100k_base": 240
+        },
+        "outputTokens": {
+          "o200k_base": 89,
+          "cl100k_base": 89
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.001485
+      },
+      "react": {
+        "briefId": "nested-sections",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Badge, Card, Heading, Row, Section, Text } from '@/components/ui';\n\nexport function SectionsOfItems({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      {data.sections.map((item) => (\n        <Row key={item.id} gap=\"md\" align=\"center\">\n          <Avatar label={item.name} />\n          <Text>{item.name}</Text>\n          <Badge tone=\"info\">{item.status}</Badge>\n        </Row>\n      ))}\n      <Section />\n      <Heading level={2}>Heading</Heading>\n      <Card pad=\"lg\" />\n      <Row gap=\"md\" align=\"center\" />\n      <Text>Body text</Text>\n      <Badge tone=\"info\">Badge</Badge>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 179,
+          "cl100k_base": 178
+        },
+        "outputTokens": {
+          "o200k_base": 185,
+          "cl100k_base": 185
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0022975
+      }
+    },
+    {
+      "briefId": "nested-groups",
+      "title": "Grouped metrics",
+      "category": "nested-loops",
+      "aui": {
+        "briefId": "nested-groups",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page GroupedMetrics data=$user\n  Stack gap=md\n    For each=$groups\n      Row gap=md align=center\n        Avatar label=$item.name\n        Text $item.name\n        Badge tone=info $item.status\n    Card pad=lg\n    Stack gap=md\n    Metric label=\"Metric\" value=$user.name\n    Heading level=2 \"Heading\"",
+        "promptTokens": {
+          "o200k_base": 246,
+          "cl100k_base": 248
+        },
+        "outputTokens": {
+          "o200k_base": 81,
+          "cl100k_base": 81
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.001425
+      },
+      "react": {
+        "briefId": "nested-groups",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Card, Heading, Metric, Stack } from '@/components/ui';\n\nexport function GroupedMetrics({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      {data.groups.map((item) => (\n        <Row key={item.id} gap=\"md\" align=\"center\">\n          <Avatar label={item.name} />\n          <Text>{item.name}</Text>\n          <Badge tone=\"info\">{item.status}</Badge>\n        </Row>\n      ))}\n      <Card pad=\"lg\" />\n      <Stack gap=\"md\" />\n      <Metric label=\"Metric\" value={data.user.name} />\n      <Heading level={2}>Heading</Heading>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 187,
+          "cl100k_base": 186
+        },
+        "outputTokens": {
+          "o200k_base": 167,
+          "cl100k_base": 167
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0021375
+      }
+    },
+    {
+      "briefId": "nested-board",
+      "title": "Kanban board",
+      "category": "nested-loops",
+      "aui": {
+        "briefId": "nested-board",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page KanbanBoard data=$user\n  Stack gap=md\n    For each=$board.columns\n      Row gap=md align=center\n        Avatar label=$item.name\n        Text $item.name\n        Badge tone=info $item.status\n    Row gap=md align=center\n    Card pad=lg\n    Stack gap=md\n    Text \"Body text\"\n    Badge tone=info \"Badge\"\n    Heading level=2 \"Heading\"",
+        "promptTokens": {
+          "o200k_base": 250,
+          "cl100k_base": 252
+        },
+        "outputTokens": {
+          "o200k_base": 93,
+          "cl100k_base": 93
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.001555
+      },
+      "react": {
+        "briefId": "nested-board",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Badge, Card, Heading, Row, Stack, Text } from '@/components/ui';\n\nexport function KanbanBoard({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      {data.board.columns.map((item) => (\n        <Row key={item.id} gap=\"md\" align=\"center\">\n          <Avatar label={item.name} />\n          <Text>{item.name}</Text>\n          <Badge tone=\"info\">{item.status}</Badge>\n        </Row>\n      ))}\n      <Row gap=\"md\" align=\"center\" />\n      <Card pad=\"lg\" />\n      <Stack gap=\"md\" />\n      <Text>Body text</Text>\n      <Badge tone=\"info\">Badge</Badge>\n      <Heading level={2}>Heading</Heading>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 191,
+          "cl100k_base": 190
+        },
+        "outputTokens": {
+          "o200k_base": 190,
+          "cl100k_base": 190
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0023775000000000003
+      }
+    },
+    {
+      "briefId": "reuse-statcard",
+      "title": "Stat card component",
+      "category": "reusable",
+      "aui": {
+        "briefId": "reuse-statcard",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page StatCardComponent data=$user\n  Stack gap=md\ndef StatCard label value tone=default\n  Card pad=lg\n    Stack gap=xs\n      Text tone=muted $label\n      Heading level=2 tone=$tone $value\n\n    StatCard label=\"Revenue\" value=$metrics.revenue tone=success\n    Card pad=lg\n    Grid min=240 gap=md\n    Metric label=\"Metric\" value=$user.name\n    Text \"Body text\"\n    Heading level=2 \"Heading\"\n    Text $metrics.active\n    Text $metrics.churn\n    Text $customer.projects",
+        "promptTokens": {
+          "o200k_base": 243,
+          "cl100k_base": 245
+        },
+        "outputTokens": {
+          "o200k_base": 129,
+          "cl100k_base": 127
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0018974999999999999
+      },
+      "react": {
+        "briefId": "reuse-statcard",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Card, Grid, Heading, Metric, Text } from '@/components/ui';\n\nfunction StatCard({ label, value, tone = 'default' }: any) {\n  return (\n    <Card pad=\"lg\"><Text>{label}</Text><Heading level={2} tone={tone}>{value}</Heading></Card>\n  );\n}\n\n\nexport function StatCardComponent({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Card pad=\"lg\" />\n      <Grid min={240} gap=\"md\" />\n      <Metric label=\"Metric\" value={data.user.name} />\n      <Text>Body text</Text>\n      <Heading level={2}>Heading</Heading>\n      <StatCard label=\"Revenue\" value={data.metrics.revenue} tone=\"success\" />\n      <Text>{data.metrics.active}</Text>\n      <Text>{data.metrics.churn}</Text>\n      <Text>{data.customer.projects}</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 184,
+          "cl100k_base": 183
+        },
+        "outputTokens": {
+          "o200k_base": 222,
+          "cl100k_base": 222
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00268
+      }
+    },
+    {
+      "briefId": "reuse-listrow",
+      "title": "List row component",
+      "category": "reusable",
+      "aui": {
+        "briefId": "reuse-listrow",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page ListRowComponent data=$user\n  Stack gap=md\n    For each=$items\n      Row gap=md align=center\n        Avatar label=$item.name\n        Text $item.name\n        Badge tone=info $item.status\ndef ListRow name status tone=default\n  Row gap=md align=center\n    Text $name\n    Badge tone=$tone $status\n\n    ListRow name=\"Item\" status=\"Done\"\n    Row gap=md align=center\n    Text \"Body text\"\n    Badge tone=info \"Badge\"",
+        "promptTokens": {
+          "o200k_base": 243,
+          "cl100k_base": 245
+        },
+        "outputTokens": {
+          "o200k_base": 113,
+          "cl100k_base": 112
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0017375
+      },
+      "react": {
+        "briefId": "reuse-listrow",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Badge, Row, Text } from '@/components/ui';\n\nfunction ListRow({ name, status, tone = 'default' }: any) {\n  return (\n    <Row gap=\"md\" align=\"center\"><Text>{name}</Text><Badge tone={tone}>{status}</Badge></Row>\n  );\n}\n\n\nexport function ListRowComponent({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      {data.items.map((item) => (\n        <Row key={item.id} gap=\"md\" align=\"center\">\n          <Avatar label={item.name} />\n          <Text>{item.name}</Text>\n          <Badge tone=\"info\">{item.status}</Badge>\n        </Row>\n      ))}\n      <Row gap=\"md\" align=\"center\" />\n      <Text>Body text</Text>\n      <Badge tone=\"info\">Badge</Badge>\n      <ListRow name=\"Item\" status=\"Done\" />\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 184,
+          "cl100k_base": 183
+        },
+        "outputTokens": {
+          "o200k_base": 220,
+          "cl100k_base": 220
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00266
+      }
+    },
+    {
+      "briefId": "reuse-emptycard",
+      "title": "Empty card component",
+      "category": "reusable",
+      "aui": {
+        "briefId": "reuse-emptycard",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page EmptyCardComponent data=$user\n  Stack gap=md\n    If condition=$user.loggedIn\n      Card pad=lg\n        Stack gap=md\n          Heading level=2 \"Member\"\n          Text tone=muted \"Signed in\"\n    Else\n      Card pad=lg\n        Stack gap=md\n          Heading level=2 \"Guest\"\n          Text tone=muted \"Signed out\"\ndef EmptyCard icon message tone=muted\n  Card pad=lg\n    Stack gap=sm align=center\n      Icon name=$icon\n      Heading level=3 $message\n\n    EmptyCard icon=home message=\"No results\"\n    Icon name=home\n    Heading level=2 \"Heading\"\n    Text \"Body text\"\n    Text $items.length",
+        "promptTokens": {
+          "o200k_base": 241,
+          "cl100k_base": 243
+        },
+        "outputTokens": {
+          "o200k_base": 159,
+          "cl100k_base": 155
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0021925
+      },
+      "react": {
+        "briefId": "reuse-emptycard",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Heading, Icon, Text } from '@/components/ui';\n\nfunction EmptyCard({ icon, message }: any) {\n  return (\n    <Card pad=\"lg\"><Icon name={icon} /><Heading level={3}>{message}</Heading></Card>\n  );\n}\n\n\nexport function EmptyCardComponent({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Icon name=\"home\" />\n      <Heading level={2}>Heading</Heading>\n      <Text>Body text</Text>\n      <EmptyCard icon=\"home\" message=\"No results\" />\n      <Text>{data.items.length}</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 182,
+          "cl100k_base": 181
+        },
+        "outputTokens": {
+          "o200k_base": 155,
+          "cl100k_base": 155
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.002005
+      }
+    },
+    {
+      "briefId": "chart-revenue",
+      "title": "Revenue chart",
+      "category": "charts",
+      "aui": {
+        "briefId": "chart-revenue",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page RevenueChart data=$user\n  Stack gap=md\n    Card pad=lg\n      Heading level=2 \"Trend\"\n      AreaChart data=$metrics.series height=240\n        Area dataKey=\"revenue\" stroke=\"#a78bfa\" fill=\"#a78bfa\"\n    Card pad=lg\n    Heading level=2 \"Heading\"\n    Text \"Revenue trend\"",
+        "promptTokens": {
+          "o200k_base": 242,
+          "cl100k_base": 244
+        },
+        "outputTokens": {
+          "o200k_base": 80,
+          "cl100k_base": 81
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.001405
+      },
+      "react": {
+        "briefId": "chart-revenue",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Area, AreaChart, CartesianGrid, XAxis } from '@acme/charts';\nimport { Card, Heading } from '@/components/ui';\n\nexport function RevenueChart({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <AreaChart data={data.metrics.series} height={240}>\n        <Area dataKey=\"revenue\" stroke=\"#a78bfa\" fill=\"#a78bfa\" />\n      </AreaChart>\n      <Card pad=\"lg\" />\n      <Heading level={2}>Heading</Heading>\n      <Text>Revenue trend</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 183,
+          "cl100k_base": 182
+        },
+        "outputTokens": {
+          "o200k_base": 150,
+          "cl100k_base": 150
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0019575
+      }
+    },
+    {
+      "briefId": "chart-grid",
+      "title": "Chart grid",
+      "category": "charts",
+      "aui": {
+        "briefId": "chart-grid",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page ChartGrid data=$user\n  Stack gap=md\n    Card pad=lg\n      Heading level=2 \"Trend\"\n      AreaChart data=$metrics.series height=240\n        Area dataKey=\"revenue\" stroke=\"#a78bfa\" fill=\"#a78bfa\"\n    Grid min=240 gap=md\n    Card pad=lg\n    Heading level=2 \"Heading\"",
+        "promptTokens": {
+          "o200k_base": 245,
+          "cl100k_base": 247
+        },
+        "outputTokens": {
+          "o200k_base": 83,
+          "cl100k_base": 84
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0014425
+      },
+      "react": {
+        "briefId": "chart-grid",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Area, AreaChart, CartesianGrid, XAxis } from '@acme/charts';\nimport { Card, Grid, Heading } from '@/components/ui';\n\nexport function ChartGrid({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <AreaChart data={data.metrics.series} height={240}>\n        <Area dataKey=\"revenue\" stroke=\"#a78bfa\" fill=\"#a78bfa\" />\n      </AreaChart>\n      <Grid min={240} gap=\"md\" />\n      <Card pad=\"lg\" />\n      <Heading level={2}>Heading</Heading>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 186,
+          "cl100k_base": 185
+        },
+        "outputTokens": {
+          "o200k_base": 155,
+          "cl100k_base": 155
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.002015
+      }
+    },
+    {
+      "briefId": "chart-axis",
+      "title": "Chart with axes",
+      "category": "charts",
+      "aui": {
+        "briefId": "chart-axis",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page ChartWithAxes data=$user\n  Stack gap=md\n    Card pad=lg\n      Heading level=2 \"Trend\"\n      AreaChart data=$metrics.series height=240\n        CartesianGrid strokeDasharray=\"3 3\"\n        XAxis dataKey=\"month\"\n        Area dataKey=\"revenue\" stroke=\"#a78bfa\" fill=\"#a78bfa\"\n    Card pad=lg",
+        "promptTokens": {
+          "o200k_base": 244,
+          "cl100k_base": 246
+        },
+        "outputTokens": {
+          "o200k_base": 85,
+          "cl100k_base": 86
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00146
+      },
+      "react": {
+        "briefId": "chart-axis",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Area, AreaChart, CartesianGrid, XAxis } from '@acme/charts';\nimport { Card } from '@/components/ui';\n\nexport function ChartWithAxes({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <AreaChart data={data.metrics.series} height={240}>\n        <CartesianGrid strokeDasharray=\"3 3\" />\n        <XAxis dataKey=\"month\" />\n        <Area dataKey=\"revenue\" stroke=\"#a78bfa\" fill=\"#a78bfa\" />\n      </AreaChart>\n      <Card pad=\"lg\" />\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 185,
+          "cl100k_base": 184
+        },
+        "outputTokens": {
+          "o200k_base": 151,
+          "cl100k_base": 153
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0019725000000000003
+      }
+    },
+    {
+      "briefId": "resp-dashboard",
+      "title": "Responsive dashboard",
+      "category": "responsive",
+      "aui": {
+        "briefId": "resp-dashboard",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page ResponsiveDashboard data=$user\n  Stack gap=md\n    Button variant=primary action=refresh \"Refresh\"\n    Card pad=lg\n      Heading level=2 \"Trend\"\n      AreaChart data=$metrics.series height=240\n    Grid min=240 gap=md\n    Card pad=lg\n    Metric label=\"Metric\" value=$user.name\n    Row gap=md align=center\n    Heading level=2 \"Heading\"\n    Text $metrics.revenue\n    Text $metrics.active",
+        "promptTokens": {
+          "o200k_base": 246,
+          "cl100k_base": 248
+        },
+        "outputTokens": {
+          "o200k_base": 103,
+          "cl100k_base": 104
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.001645
+      },
+      "react": {
+        "briefId": "resp-dashboard",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Area, AreaChart, CartesianGrid, XAxis } from '@acme/charts';\nimport { Button, Card, Grid, Heading, Metric, Page, Row } from '@/components/ui';\n\nexport function ResponsiveDashboard({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Page>\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('refresh')}>Refresh</Button>\n      <AreaChart data={data.metrics.series} height={240}>\n      </AreaChart>\n      <Page />\n      <Grid min={240} gap=\"md\" />\n      <Card pad=\"lg\" />\n      <Metric label=\"Metric\" value={data.user.name} />\n      <Row gap=\"md\" align=\"center\" />\n      <Heading level={2}>Heading</Heading>\n      <Text>{data.metrics.revenue}</Text>\n      <Text>{data.metrics.active}</Text>\n    </Stack>\n    </Page>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 187,
+          "cl100k_base": 186
+        },
+        "outputTokens": {
+          "o200k_base": 219,
+          "cl100k_base": 218
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0026575
+      }
+    },
+    {
+      "briefId": "resp-hero",
+      "title": "Responsive hero",
+      "category": "responsive",
+      "aui": {
+        "briefId": "resp-hero",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page ResponsiveHero data=$user\n  Stack gap=md\n    Button variant=primary action=learnMore \"LearnMore\"\n    Button variant=primary action=signUp \"SignUp\"\n    Row gap=md align=center\n    Stack gap=md\n    Heading level=2 \"Heading\"\n    Text \"Body text\"\n    Card pad=lg",
+        "promptTokens": {
+          "o200k_base": 251,
+          "cl100k_base": 253
+        },
+        "outputTokens": {
+          "o200k_base": 72,
+          "cl100k_base": 71
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0013475
+      },
+      "react": {
+        "briefId": "resp-hero",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Button, Card, Heading, Row, Stack, Text } from '@/components/ui';\n\nexport function ResponsiveHero({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('learnMore')}>LearnMore</Button>\n      <Button variant=\"primary\" onClick={() => onAction('signUp')}>SignUp</Button>\n      <Row gap=\"md\" align=\"center\" />\n      <Stack gap=\"md\" />\n      <Heading level={2}>Heading</Heading>\n      <Text>Body text</Text>\n      <Card pad=\"lg\" />\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 192,
+          "cl100k_base": 191
+        },
+        "outputTokens": {
+          "o200k_base": 161,
+          "cl100k_base": 158
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0020900000000000003
+      }
+    },
+    {
+      "briefId": "resp-pricing",
+      "title": "Responsive pricing",
+      "category": "responsive",
+      "aui": {
+        "briefId": "resp-pricing",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page ResponsivePricing data=$user\n  Stack gap=md\n    Button variant=primary action=chooseFree \"ChooseFree\"\n    Button variant=primary action=choosePro \"ChoosePro\"\n    Button variant=primary action=chooseTeam \"ChooseTeam\"\n    Grid min=240 gap=md\n    Card pad=lg\n    Stack gap=md\n    Heading level=2 \"Heading\"\n    Text \"Body text\"\n    Badge tone=info \"Badge\"\n    Divider",
+        "promptTokens": {
+          "o200k_base": 239,
+          "cl100k_base": 241
+        },
+        "outputTokens": {
+          "o200k_base": 97,
+          "cl100k_base": 98
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0015674999999999999
+      },
+      "react": {
+        "briefId": "resp-pricing",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Badge, Button, Card, Divider, Grid, Heading, Stack, Text } from '@/components/ui';\n\nexport function ResponsivePricing({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('chooseFree')}>ChooseFree</Button>\n      <Button variant=\"primary\" onClick={() => onAction('choosePro')}>ChoosePro</Button>\n      <Button variant=\"primary\" onClick={() => onAction('chooseTeam')}>ChooseTeam</Button>\n      <Grid min={240} gap=\"md\" />\n      <Card pad=\"lg\" />\n      <Stack gap=\"md\" />\n      <Heading level={2}>Heading</Heading>\n      <Text>Body text</Text>\n      <Badge tone=\"info\">Badge</Badge>\n      <Divider />\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 180,
+          "cl100k_base": 179
+        },
+        "outputTokens": {
+          "o200k_base": 203,
+          "cl100k_base": 201
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00248
+      }
+    },
+    {
+      "briefId": "a11y-form",
+      "title": "Labeled form",
+      "category": "a11y",
+      "aui": {
+        "briefId": "a11y-form",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page LabeledForm data=$user\n  Stack gap=md\n    Button variant=primary action=submit \"Submit\"\n    Input type=text placeholder=\"Field 1\" value=$form.field0 change=emailChanged\n    Input type=text placeholder=\"Field 2\" value=$form.field1 change=passwordChanged\n    Card pad=lg\n    Stack gap=md\n    Field label=\"Field\" value=$user.name\n    Checkbox checked=$form.remember \"Remember me\"\n    Heading level=2 \"Heading\"\n    Text $form.email\n    Text $form.password\n    Text \"Email\"\n    Text \"Password\"",
+        "promptTokens": {
+          "o200k_base": 243,
+          "cl100k_base": 245
+        },
+        "outputTokens": {
+          "o200k_base": 127,
+          "cl100k_base": 127
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0018774999999999998
+      },
+      "react": {
+        "briefId": "a11y-form",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Button, Card, Checkbox, Field, Heading, Input, Stack } from '@/components/ui';\n\nexport function LabeledForm({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('submit')}>Submit</Button>\n      <Input placeholder=\"Field 1\" value={data.form.field0} onChange={(e) => onAction('emailChanged', e.target.value)} />\n      <Input placeholder=\"Field 2\" value={data.form.field1} onChange={(e) => onAction('passwordChanged', e.target.value)} />\n      <Card pad=\"lg\" />\n      <Stack gap=\"md\" />\n      <Field label=\"Field\" value={data.user.name} />\n      <Checkbox checked={data.form.remember}>Remember me</Checkbox>\n      <Heading level={2}>Heading</Heading>\n      <Text>{data.form.email}</Text>\n      <Text>{data.form.password}</Text>\n      <Text>Email</Text>\n      <Text>Password</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 184,
+          "cl100k_base": 183
+        },
+        "outputTokens": {
+          "o200k_base": 247,
+          "cl100k_base": 244
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.00293
+      }
+    },
+    {
+      "briefId": "a11y-status",
+      "title": "Status communication",
+      "category": "a11y",
+      "aui": {
+        "briefId": "a11y-status",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page StatusCommunication data=$user\n  Stack gap=md\n    Button variant=primary action=retry \"Retry\"\n    Alert tone=info \"Alert\"\n    Spinner size=md\n    Stack gap=md\n    Text $query.loading\n    Text \"All systems operational\"\n    Text \"Loading\"",
+        "promptTokens": {
+          "o200k_base": 247,
+          "cl100k_base": 249
+        },
+        "outputTokens": {
+          "o200k_base": 62,
+          "cl100k_base": 62
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0012374999999999999
+      },
+      "react": {
+        "briefId": "a11y-status",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Alert, Button, Spinner, Stack } from '@/components/ui';\n\nexport function StatusCommunication({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('retry')}>Retry</Button>\n      <Alert tone=\"info\">Alert</Alert>\n      <Spinner size=\"md\" />\n      <Stack gap=\"md\" />\n      <Text>{data.query.loading}</Text>\n      <Text>All systems operational</Text>\n      <Text>Loading</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 188,
+          "cl100k_base": 187
+        },
+        "outputTokens": {
+          "o200k_base": 139,
+          "cl100k_base": 136
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0018599999999999999
+      }
+    },
+    {
+      "briefId": "a11y-toggles",
+      "title": "Toggle settings",
+      "category": "a11y",
+      "aui": {
+        "briefId": "a11y-toggles",
+        "condition": "aui",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "Page ToggleSettings data=$user\n  Stack gap=md\n    Button variant=primary action=save \"Save\"\n    Input type=text placeholder=\"Field 1\" value=$form.field0 change=emailToggled\n    Input type=text placeholder=\"Field 2\" value=$form.field1 change=pushToggled\n    Card pad=lg\n    Stack gap=md\n    Switch checked=$prefs.email \"Toggle\"\n    Heading level=2 \"Heading\"\n    Text $prefs.push\n    Text \"Email\"\n    Text \"Push\"",
+        "promptTokens": {
+          "o200k_base": 245,
+          "cl100k_base": 247
+        },
+        "outputTokens": {
+          "o200k_base": 110,
+          "cl100k_base": 110
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.0017125
+      },
+      "react": {
+        "briefId": "a11y-toggles",
+        "condition": "react",
+        "model": "gpt-4o",
+        "source": "fixture",
+        "output": "import { Button, Card, Heading, Stack, Switch } from '@/components/ui';\n\nexport function ToggleSettings({ data, onAction }: { data: any; onAction: (name: string, payload?: unknown) => void }) {\n  return (\n    <Stack gap=\"md\">\n      <Button variant=\"primary\" onClick={() => onAction('save')}>Save</Button>\n      <Input placeholder=\"Field 1\" value={data.form.field0} onChange={(e) => onAction('emailToggled', e.target.value)} />\n      <Input placeholder=\"Field 2\" value={data.form.field1} onChange={(e) => onAction('pushToggled', e.target.value)} />\n      <Card pad=\"lg\" />\n      <Stack gap=\"md\" />\n      <Heading level={2}>Heading</Heading>\n      <Text>{data.prefs.email}</Text>\n      <Text>{data.prefs.push}</Text>\n      <Text>Email</Text>\n      <Text>Push</Text>\n    </Stack>\n  );\n}\n",
+        "promptTokens": {
+          "o200k_base": 186,
+          "cl100k_base": 185
+        },
+        "outputTokens": {
+          "o200k_base": 218,
+          "cl100k_base": 215
+        },
+        "repairTokens": {
+          "o200k_base": 0,
+          "cl100k_base": 0
+        },
+        "firstPassParseOk": true,
+        "firstPassValidOk": true,
+        "generatedTsxOk": true,
+        "repairTurns": 0,
+        "completed": true,
+        "contract": {
+          "nodes": true,
+          "bindings": true,
+          "actions": true,
+          "events": true,
+          "text": true
+        },
+        "costUsd": 0.002645
+      }
+    }
+  ],
+  "totals": {
+    "aui": {
+      "outputTokens": {
+        "o200k_base": 3763,
+        "cl100k_base": 3746
+      },
+      "repairTokens": {
+        "o200k_base": 0,
+        "cl100k_base": 0
+      },
+      "firstPassValid": 36,
+      "completed": 36,
+      "contractPass": 36,
+      "costUsd": 0.05974500000000001
+    },
+    "react": {
+      "outputTokens": {
+        "o200k_base": 6799,
+        "cl100k_base": 6750
+      },
+      "repairTokens": {
+        "o200k_base": 0,
+        "cl100k_base": 0
+      },
+      "firstPassValid": 36,
+      "completed": 36,
+      "contractPass": 36,
+      "costUsd": 0.08479500000000001
+    }
+  }
+}

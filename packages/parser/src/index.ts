@@ -1,5 +1,13 @@
 export * from './ast.ts';
+export * from './bindings.ts';
+export * from './compile.ts';
+export * from './diagnostics.ts';
 export * from './lexer.ts';
+export * from './normalize.ts';
 export * from './parser.ts';
+export * from './print.ts';
+export * from './registry.ts';
 export * from './text.ts';
-export * from './react.ts';
+export * from './validate.ts';
+export { compileReact } from './react.ts';
+export type { CompileOptions as ReactCompileOptions } from './react.ts';

@@ -1,10 +1,11 @@
 # @codedia/parser
 
-**An LLM-oriented UI DSL with a deterministic compiler, in one package.**
-Express screens in `.aui` — a small DSL that is the UI tree itself — then
-parse it into a canonical AST and compile it deterministically to React +
-TypeScript. This is a DSL plus a compiler, not a token-compression trick:
-the token savings are a *measured consequence* of the small grammar.
+**An LLM-first, validated UI language with a deterministic compiler, in one
+package.** Express screens in `.aui` — a small DSL that is the UI tree
+itself — then run a deterministic pipeline: parse, validate against a
+host-owned registry, normalize to a canonical IR, and compile to React +
+TypeScript. This is a DSL plus a compiler, not a token-compression trick: the
+token savings are a *measured consequence* of the small grammar.
 
 ```
 npm install @codedia/parser
@@ -22,7 +23,7 @@ Ask an LLM to build a screen and it emits React + JSX + imports + className
 strings + CSS — a large, error-prone surface. `.aui` is the opposite: the
 source **is** the UI tree, expressed in a small, predictable DSL. The
 compiler — not the model — owns every decision an LLM is bad at: imports,
-JSX syntax, binding resolution, and output formatting.
+JSX syntax, binding resolution, event wiring, and output formatting.
 
 ```aui
 Card max=md pad=lg
@@ -32,119 +33,155 @@ Card max=md pad=lg
     Button variant=primary action=continue "Continue"
 ```
 
-The compiler owns the React: imports, JSX syntax, binding resolution, and
-output formatting. The language has no arbitrary JavaScript, CSS, or invented
-imports — it is safe by construction.
+The language has no arbitrary JavaScript, CSS, or invented imports. In
+strict mode, every component, prop, token, and import is constrained by the
+registry you own.
 
 ## Quickstart
 
 ```ts
-import { parse, compileReact } from '@codedia/parser';
+import { compile, defineRegistry, CORE_REGISTRY, extendRegistry, formatDiagnostics } from '@codedia/parser';
 
-const doc = parse(`
+// Extend the core registry with your design system and third-party components.
+const registry = extendRegistry(CORE_REGISTRY, {
+  AreaChart: {
+    imports: { source: '@company/charts', export: 'AreaChart' },
+    props: { data: { type: 'binding' }, height: { type: 'number' } },
+    children: 'nodes',
+  },
+});
+
+const result = compile(`
 Page Dashboard data=$metrics
   Stack gap=md
     Heading level=1 "Overview"
     Metric label="Active users" value=$metrics.active
     Button variant=primary action=refresh "Refresh"
-`);
+`, { registry, strict: true });
 
-console.log(doc.rootNodes[0].type); // 'Page'
-const tsx = compileReact(doc);
-```
-
-`compileReact` returns a complete, readable React component:
-
-```tsx
-import { Button, Heading, Metric, Page, Stack } from '@/components/ui'
-
-export function Dashboard({ data, onAction }: { data: any; onAction: (name: string) => void }) {
-  return (
-    <Page><Stack gap="md"><Heading level="1">Overview</Heading><Metric label="Active users" value={data.metrics.active} /><Button variant="primary" onClick={() => onAction("refresh")}>Refresh</Button></Stack></Page>
-  )
+if (!result.ok) {
+  console.error(formatDiagnostics(result.diagnostics));
+} else {
+  console.log(result.code); // deterministic React + TSX
 }
 ```
 
-The output is a contract, not a black box: `@/components/ui` is your
-design-system adapter, `data` carries bindings, and `onAction` routes named
-actions. Swap the adapter target and the same `.aui` produces different
-frameworks later.
+`compile(source, options)` runs the whole pipeline — parse → validate →
+normalize → compile — and **refuses to emit code in `strict` mode when
+error-level diagnostics exist**. You never sequence low-level calls to get
+safe output.
 
-## Features
+## Pipeline & API
 
-- **Lexer + indentation parser** — `tokenize(source)` → tokens, `parse(source)` → AST. Deterministic, no magic.
-- **Real UI constructs** — `import` (third-party libraries), `def` (reusable
-  component templates with `$param` bindings), `If`/`Else`, `For`, `State`,
-  and 27 semantic nodes (Page, Stack, Card, Grid, Input, Metric, …).
-- **React compiler** — `compileReact(doc)` emits imports, local components,
-  ternaries for `If/Else`, `.map()` for `For`, and interpolated bindings inside
-  text. Pure: same input, same output.
-- **Text/binding resolution** — `tokenizeText`, `interpolateText`,
-  `resolvePath`, and `stringifyResolved` for turning `$user.name` into display
-  values without ever producing `[object Object]`.
-- **Zero runtime dependencies** — ESM, Node ≥ 18, works in the browser.
-
-## API
+```text
+source → lexer/parser → RawDocument → validate() → normalize() → CanonicalDocument → compileReact() → TSX
+```
 
 | Export | Description |
 |---|---|
-| `tokenize(source): Token[]` | Lex `.aui` source into tokens. |
-| `parse(source): Document` | Parse tokens into the canonical AST (`rootNodes`, `imports`, `components`). |
-| `compileReact(doc, opts?): string` | Deterministically compile a `Document` to React + TSX. `opts.componentName` overrides the generated component name. |
-| `tokenizeText(text): TextSegment[]` | Split literal text from `$bindings` (keeps `$0`, `$129.00` literal). |
-| `interpolateText(text, scope): string` | Replace `$bindings` in text with resolved values. |
-| `resolvePath(data, path): unknown` | Walk a dotted path (`user.name`) through an object. |
-| `stringifyResolved(value): string \| null` | Safe display string — never `[object Object]`; arrays of objects render their count. |
+| `parse(source): RawDocument` | Parse `.aui` into the raw syntax tree (typed raw values, line numbers). |
+| `validate(source, opts?): Diagnostic[]` | Registry, structural, indentation, identifier, binding, and resource-limit checks. |
+| `normalize(doc, opts?): Result<CanonicalDocument>` | Raw → canonical IR: typed values, explicit `If`/`For` nodes, unified def params. |
+| `compile(source, opts?): CompileResult` | High-level pipeline (`{ code?, rawAst, ast?, diagnostics, ok }`). `strict: true` refuses to emit code on errors. |
+| `compileReact(doc, opts?): string` | Low-level canonical IR → React + TSX (also accepts raw docs for migration). |
+| `printAui(doc): string` | Canonical `.aui` printer — deterministic, round-trip friendly. |
+| `defineRegistry(defs) / extendRegistry(base, extra)` | Host-owned registry of nodes, props, tokens, events, and imports. |
+| `CORE_REGISTRY` | The default/design-system-neutral registry shipped with the package. |
+| `formatDiagnostics(diags)` / `formatDiagnosticsForLLM(diags, source?)` | Line-anchored reports designed for LLM repair loops. |
+| `tokenize`, `scan`, `tokenizeText`, `interpolateText`, `resolvePath`, `stringifyResolved`, `resolveBindingValue` | Lexing and text/binding helpers. |
 
-Types: `Document`, `Node`, `Prop`, `ImportDecl`, `ComponentDef`, `Token`.
+## Registry — the safety boundary
+
+The registry is how third-party components and your design system enter the
+language. `strict` compilation is **registry-only by default**: models write
+`AreaChart data=$series` and the compiler derives `import { AreaChart } from
+"@company/charts"` — models never write import lines and cannot invent
+dependencies. Explicit `import` lines are an advanced/compatibility mode:
+
+```ts
+// Advanced: allow explicit imports from a specific allowlist.
+compile(source, { imports: { mode: 'explicit', allow: ['recharts'] } });
+// Or fully permissive (documented as unsafe):
+compile(source, { imports: { unsafeImports: true } });
+```
+
+## Semantic events
+
+`.aui` uses framework-neutral event names; the registry owns the target
+mapping:
+
+```aui
+Input value=$form.email change=emailChanged
+Checkbox checked=$form.remember change=rememberChanged "Remember me"
+```
+
+compiles to (for a React target):
+
+```tsx
+<Input value={data.form.email} onChange={(e) => onAction('emailChanged', e.target.value)} />
+<Checkbox checked={data.form.remember} onChange={(e) => onAction('rememberChanged', e.target.checked)}>Remember me</Checkbox>
+```
+
+`events: { change: { target: 'onChange', payload: 'target.value' } }` lives in
+the registry, so the language never hard-codes React event objects.
+
+## Diagnostics
+
+Diagnostics carry a stable machine-readable `code`, severity, line (and
+column where feasible), message, and optional fix hint — intentionally easy
+to feed back to an LLM for one-shot repair:
+
+```
+line 7: AUI_INVALID_TOKEN error: <Button> prop "variant=purple" is invalid. Expected one of: primary, secondary, ghost, danger. (suggestion: use variant=primary)
+```
+
+## Token efficiency
+
+Measured with the real GPT tokenizers (`o200k_base` primary, `cl100k_base`
+legacy — pinned explicitly, no approximation), six real screens save
+**1,140 tokens (`o200k_base`) — 50% fewer, 2.0× smaller than hand-written
+React**, under a functional-equivalence gate (every scenario declares a
+feature contract; the validator fails if either implementation is missing a
+declared feature). Reproduce with `npm run validate:tokens` in
+[`apps/www`](../../apps/www). See
+[`docs/token-methodology.md`](../../docs/token-methodology.md).
 
 ## Grammar at a glance
 
 ```text
-import { AreaChart } from "recharts"      # third-party imports
-def StatCard label value tone=default     # reusable component template
-  Card
-    Text $label
-    Metric value=$value tone=$tone
-
-Page Dashboard data=$metrics              # nodes: indent = nesting
+Page Dashboard data=$metrics              # root; label becomes component name
   Stack gap=md
-    StatCard label="Active users" value=$metrics.active
-    If condition=$user.admin              # conditionals
+    Heading level=2 "Overview"            # quoted text content
+    Metric label="Active users" value=$metrics.active
+    Input value=$form.email change=emailChanged   # semantic events
+    If condition=$user.admin              # conditional branch
       Badge tone=success "Admin"
     Else
       Badge tone=muted "Member"
-    For each=$users                       # loops
+    For each=$tasks                       # loop over a binding
       Row
-        Text $item.name
+        Text "Task $item.title"           # bindings interpolate inside text
 ```
 
-- **Nodes** — `Page Stack Row Grid Card Section Spacer Heading Text Image Icon
-  Divider Button Link Input Select Checkbox Switch Alert Badge Spinner Metric
-  Field` (+ structural `If Else For State`).
+- **Nodes** — `Page Stack Row Grid Card Section Spacer Heading Text Image
+  Icon Divider Button Link Input Select Checkbox Switch Alert Badge Spinner
+  Metric Field` (+ structural `If Else For`; `State` is reserved).
 - **Props** — `key=value`; bare values (`gap=md`, `variant=primary`) are
   semantic tokens; `$path` are data bindings; quoted strings
-  (`label="Active users"`) are literal.
-- **Actions** — `action=name` only; the compiler routes them through
-  `onAction("name")`.
+  (`label="Active users"`) are literal (a quoted `"$user.name"` is a literal
+  string, not a binding).
+- **Bindings** — `$user.name` → `data.user.name`; `$item` / `$index` inside
+  `For`; `$param` inside `def` bodies; `$root.path` for explicit absolute
+  access.
+- **Actions** — `action=name` only, routed through `onAction("name")`.
+- **def** — `def StatCard label value tone=default` declares a reusable
+  template; params are one unified model (required + defaulted).
+- **Imports** — via the registry in strict mode (advanced: allowlisted
+  explicit imports). Side-effect imports are supported in compat mode.
 - **No** arbitrary JS, CSS, className, or eval — ever.
 
 Full spec: [`docs/grammar.md`](../../docs/grammar.md) ·
-[`LANGUAGE_SPEC_V0.md`](../../LANGUAGE_SPEC_V0.md)
-
-## Token efficiency
-
-The language exists because tokens matter. The Examples gallery on the website
-measures every scenario with the real GPT-4 tokenizer (`cl100k_base`),
-comparing `.aui` against the generated React and hand-written React:
-
-> **Six real screens: 1,080 tokens saved — 48% fewer, 1.9× smaller than
-> hand-written React.**
-
-The numbers are reproducible: `npm run validate:tokens` in
-[`apps/www`](../../apps/www) re-counts every scenario and rewrites
-[`token-report.json`](../../apps/www/token-report.json). See
-[`docs/token-methodology.md`](../../docs/token-methodology.md).
+[`docs/api.md`](../../docs/api.md) · [`docs/compiler.md`](../../docs/compiler.md)
 
 ## Development
 

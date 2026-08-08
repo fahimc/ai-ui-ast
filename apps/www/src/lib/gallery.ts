@@ -1,3 +1,27 @@
+/**
+ * Gallery scenarios used by the Examples page and the token benchmark.
+ *
+ * Every scenario declares a machine-readable `features` contract (rendered
+ * nodes, bindings, actions, events). The token benchmark fails when a
+ * declared feature is missing from either implementation, so `.aui` and
+ * hand-written React are only ever compared when they are functionally
+ * equivalent.
+ *
+ * Third-party components (AreaChart, Area, …) are *registered* in the
+ * website registry (`lib/registry.ts`), not imported inline — the model
+ * never writes import lines.
+ */
+export interface ScenarioFeatures {
+  /** Registry/def component names the scenario renders. */
+  render: string[];
+  /** Binding paths used (without the `$`). */
+  bindings: string[];
+  /** Named actions routed through `onAction`. */
+  actions: string[];
+  /** Semantic change= event action names. */
+  events: string[];
+}
+
 export interface GalleryScenario {
   id: string;
   title: string;
@@ -7,6 +31,7 @@ export interface GalleryScenario {
   /** What the scenario demonstrates. */
   highlights: string[];
   auiCode: string;
+  features: ScenarioFeatures;
 }
 
 export const GALLERY: GalleryScenario[] = [
@@ -14,15 +39,19 @@ export const GALLERY: GalleryScenario[] = [
     id: 'imports',
     title: 'Third-party libraries',
     feature: 'Imports',
-    tagline: 'Bring in a real charting library without leaving the language.',
+    tagline: 'Registered chart components reach real libraries without an import line.',
     highlights: [
-      '`import { AreaChart, Area } from "@acme/charts"` — the only way to reach a third-party library.',
-      'Imported components are validated by name and compile to real import statements.',
-      'No guessing: the registry owns every other dependency decision.',
+      '`AreaChart` is registered in the host registry and maps to `@acme/charts` — the model just writes `AreaChart data=$metrics.series`.',
+      'The compiler derives the import from the registry, deterministically and deduplicated.',
+      'Strict compilation cannot invent arbitrary package specifiers.',
     ],
-    auiCode: `import { AreaChart, Area, XAxis, CartesianGrid } from "@acme/charts"
-
-Page Revenue data=$metrics
+    features: {
+      render: ['AreaChart', 'Area', 'XAxis', 'CartesianGrid', 'Badge', 'Button', 'Card', 'Heading', 'Row', 'Stack', 'Text'],
+      bindings: ['metrics.series'],
+      actions: ['export'],
+      events: [],
+    },
+    auiCode: `Page Revenue data=$metrics
   Stack gap=lg
     Row gap=md align=center justify=between
       Stack gap=xs
@@ -49,6 +78,12 @@ Page Revenue data=$metrics
       'Inside the body, `$label` / `$value` / `$tone` reference the params — no JS needed.',
       'One definition, four usages: the generated React gets a real local component.',
     ],
+    features: {
+      render: ['StatCard', 'Card', 'Grid', 'Heading', 'Stack', 'Text'],
+      bindings: ['metrics.revenue', 'metrics.active', 'metrics.churn', 'customer.projects'],
+      actions: [],
+      events: [],
+    },
     auiCode: `def StatCard label value tone=default
   Card pad=lg
     Stack gap=xs
@@ -72,6 +107,12 @@ Page Metrics data=$metrics
       'No ternary soup, no && chains — the branch is just indentation.',
       'The compiler emits the ternary for you, exactly once, deterministically.',
     ],
+    features: {
+      render: ['Avatar', 'Badge', 'Button', 'Card', 'Divider', 'Heading', 'Row', 'Stack', 'Text'],
+      bindings: ['user.loggedIn', 'user.name'],
+      actions: ['signOut', 'signIn'],
+      events: [],
+    },
     auiCode: `Page Account data=$user
   If condition=$user.loggedIn
     Card pad=lg
@@ -97,9 +138,15 @@ Page Metrics data=$metrics
     tagline: 'Forms, validation states, and actions — wired, not coded.',
     highlights: [
       'Inputs bind to app state: `value=$form.email` — the model owns the state.',
+      'Semantic events: `change=emailChanged` compiles to a target `onChange` with the value payload.',
       'Actions are named references: `action=pay` routes through `onAction`, never inline code.',
-      'Tone tokens carry the messaging: `Alert tone=warning`, `Button variant=primary`.',
     ],
+    features: {
+      render: ['Alert', 'Button', 'Card', 'Checkbox', 'Divider', 'Heading', 'Input', 'Row', 'Stack', 'Text'],
+      bindings: ['form.email', 'form.card', 'form.expiry', 'form.cvc', 'form.remember'],
+      actions: ['pay'],
+      events: ['emailChanged', 'cardChanged', 'expiryChanged', 'cvcChanged', 'rememberChanged'],
+    },
     auiCode: `Page Checkout
   Card pad=lg
     Stack gap=md
@@ -107,12 +154,12 @@ Page Metrics data=$metrics
       Text tone=muted "One-time payment · Pro plan"
       Divider
       Stack gap=md
-        Input type=email placeholder="Email" value=$form.email
-        Input type=text placeholder="Card number" value=$form.card
+        Input type=email placeholder="Email" value=$form.email change=emailChanged
+        Input type=text placeholder="Card number" value=$form.card change=cardChanged
         Row gap=md
-          Input type=text placeholder="MM / YY" value=$form.expiry
-          Input type=text placeholder="CVC" value=$form.cvc
-        Checkbox checked=$form.remember "Save card for next time"
+          Input type=text placeholder="MM / YY" value=$form.expiry change=expiryChanged
+          Input type=text placeholder="CVC" value=$form.cvc change=cvcChanged
+        Checkbox checked=$form.remember change=rememberChanged "Save card for next time"
       Alert tone=warning "Test mode — no real charge will be made."
       Button variant=primary action=pay size=lg "Pay $129.00"`,
   },
@@ -126,9 +173,13 @@ Page Metrics data=$metrics
       '`StatCard value=$metrics.revenue` and `AreaChart data=$metrics.series` read straight from it.',
       '`For each=$items` turns a list binding into rendered rows — with `$item` in scope.',
     ],
-    auiCode: `import { AreaChart, Area, XAxis, CartesianGrid } from "@acme/charts"
-
-def StatCard label value tone=default
+    features: {
+      render: ['StatCard', 'AreaChart', 'Area', 'XAxis', 'CartesianGrid', 'Avatar', 'Badge', 'Button', 'Card', 'Grid', 'Heading', 'Row', 'Section', 'Stack', 'Text'],
+      bindings: ['metrics.revenue', 'metrics.users', 'metrics.churn', 'metrics.series', 'items'],
+      actions: ['refresh'],
+      events: [],
+    },
+    auiCode: `def StatCard label value tone=default
   Card pad=lg
     Stack gap=xs
       Text tone=muted $label
@@ -169,13 +220,17 @@ Page LiveDashboard data=$metrics
     feature: 'Composition',
     tagline: 'A billing portal: defs, imports, logic, forms, and charts in one page.',
     highlights: [
-      'Imports, defs, bindings, actions, and branches compose in a single file.',
-      'The AST stays the single source of truth — the React compiler handles the rest.',
-      '14 lines of `.aui` replace 40+ lines of hand-written React.',
+      'Defs, registered charts, bindings, actions, and branches compose in a single file.',
+      'The canonical IR is the single source of truth — the React compiler handles the rest.',
+      'A small `.aui` file replaces a much larger hand-written React implementation.',
     ],
-    auiCode: `import { AreaChart, Area } from "@acme/charts"
-
-def StatCard label value tone=default
+    features: {
+      render: ['StatCard', 'AreaChart', 'Area', 'Button', 'Card', 'Grid', 'Heading', 'Row', 'Stack', 'Switch', 'Text'],
+      bindings: ['plan.tier', 'plan.renewsAt', 'items.length', 'user.role', 'prefs.email', 'metrics.series'],
+      actions: ['upgrade', 'invoices', 'cancel'],
+      events: [],
+    },
+    auiCode: `def StatCard label value tone=default
   Card pad=lg
     Stack gap=xs
       Text tone=muted $label

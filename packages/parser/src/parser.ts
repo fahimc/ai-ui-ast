@@ -1,14 +1,19 @@
-import type { ComponentDef, Document, Node } from './ast.ts';
-import { tokenize } from './lexer.ts';
+import type { RawComponentDef, RawDocument, RawNode, RawProp } from './ast.ts';
+import { scan } from './lexer.ts';
 import type { Token } from './lexer.ts';
 
 interface Container {
-  children: Node[];
+  children: RawNode[];
 }
 
-export function parse(input: string): Document {
-  const tokens = tokenize(input);
-  const doc: Document = { rootNodes: [], imports: [], components: [] };
+/**
+ * Parse `.aui` source into the raw syntax tree. The parser is deliberately
+ * lenient: semantic/structural/indentation problems are reported by
+ * `validate()`, not thrown here. Every node carries its 1-based source line.
+ */
+export function parse(input: string): RawDocument {
+  const { tokens } = scan(input);
+  const doc: RawDocument = { rootNodes: [], imports: [], components: [] };
   const root: Container = { children: doc.rootNodes };
   const stack: { indent: number; container: Container }[] = [];
 
@@ -25,29 +30,41 @@ export function parse(input: string): Document {
       while (stack.length > 0 && stack[stack.length - 1].indent >= token.indent) {
         stack.pop();
       }
-      const def: ComponentDef = {
+      const def: RawComponentDef = {
         name: token.label || '',
-        params: token.params || [],
-        defaultProps: token.props,
+        params: token.params ?? [],
         children: [],
+        line: token.line,
       };
       doc.components!.push(def);
       stack.push({ indent: token.indent, container: def as unknown as Container });
       continue;
     }
 
-    const node: Node = {
+    const node: RawNode = {
       type: token.type,
-      props: token.props,
+      props: token.props.map((p): RawProp => ({ key: p.key, value: p.value })),
       label: token.label,
       textContent: token.textContent,
       children: [],
+      line: token.line,
     };
 
     // `Else` continues the sibling block at the same indent (it belongs to
-    // the matching `If`), so it must not pop that block's container.
+    // the matching `If`), so it must not pop that block's container. A second
+    // `Else` at the same indent becomes a sibling of the first so the
+    // validator can reject it as a duplicate instead of silently nesting it.
     const minIndent = token.type === 'Else' ? token.indent + 1 : token.indent;
     while (stack.length > 0 && stack[stack.length - 1].indent >= minIndent) {
+      stack.pop();
+    }
+    if (
+      token.type === 'Else' &&
+      stack.length > 0 &&
+      stack[stack.length - 1].indent === token.indent &&
+      'type' in stack[stack.length - 1].container &&
+      (stack[stack.length - 1].container as unknown as { type: string }).type === 'Else'
+    ) {
       stack.pop();
     }
 

@@ -32,7 +32,8 @@ export function Language() {
             <li>Actions are named references (<code>action=save</code>), resolved by the compiler.</li>
             <li><code>If condition=$x … Else</code> branches declaratively — indentation, not ternaries.</li>
             <li><code>def Name param1 param2=default</code> defines a reusable component template.</li>
-            <li><code>import {"{ AreaChart }"} from "pkg"</code> is the only escape hatch to third-party libraries.</li>
+            <li>Third-party components come from the registry (<code>AreaChart</code> maps to its host package) — no import lines in strict mode.</li>
+            <li>Semantic events: <code>change=emailChanged</code> on controls compiles to the target handler with the value payload.</li>
           </ul>
         </div>
       </div>

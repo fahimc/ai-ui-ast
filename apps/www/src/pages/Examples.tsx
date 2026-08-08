@@ -1,34 +1,44 @@
 import { useMemo } from 'react';
-import { parse } from '@codedia/parser';
+import { compile } from '@codedia/parser';
 import { CodeBlock } from '../components/CodeBlock';
 import { Section } from '../components/Section';
 import { GALLERY, type GalleryScenario } from '../lib/gallery';
-import { compileReact } from '@codedia/parser';
+import { WWW_REGISTRY } from '../lib/registry';
 import report from '../../token-report.json';
 
 /**
  * The token numbers on this page come from `token-report.json`, written by
- * `scripts/validate-tokens.ts` (`npm run validate:tokens`). The script parses
- * every scenario, compiles it to React, counts `.aui`, generated, and
- * hand-written React with the real GPT-4 tokenizer, and rewrites this report.
+ * `scripts/validate-tokens.ts` (`npm run validate:tokens`). The script runs
+ * every scenario through the strict package pipeline, counts `.aui`,
+ * generated, and hand-written React with explicitly pinned tokenizer
+ * encodings (o200k_base primary, cl100k_base legacy), and rewrites this
+ * report. The page renders the primary encoding.
  */
 
-interface ReportScenario {
-  id: string;
-  title: string;
+interface EncodingCounts {
   aui: number;
   generated: number;
   handwritten: number;
 }
 
+interface ReportScenario {
+  id: string;
+  title: string;
+  features: { render: string[]; bindings: string[]; actions: string[]; events: string[] };
+  tokenizers: Record<string, EncodingCounts>;
+}
+
 interface TokenReport {
-  tokenizer: string;
+  primaryEncoding: string;
+  tokenizers: Record<string, string>;
   note: string;
+  instructionOverhead: { cold: Record<string, number>; warm: Record<string, number>; note: string };
   scenarios: ReportScenario[];
-  totals: { aui: number; generated: number; handwritten: number };
+  totals: Record<string, EncodingCounts>;
 }
 
 const TOKEN_REPORT = report as TokenReport;
+const PRIMARY = TOKEN_REPORT.primaryEncoding ?? 'o200k_base';
 
 const byScenarioId: Record<string, ReportScenario> = Object.fromEntries(
   TOKEN_REPORT.scenarios.map((s) => [s.id, s]),
@@ -39,7 +49,7 @@ function formatTokens(n: number): string {
 }
 
 function TokenBar({ scenario }: { scenario: ReportScenario }) {
-  const { aui, generated, handwritten } = scenario;
+  const { aui, generated, handwritten } = scenario.tokenizers[PRIMARY];
   const saved = handwritten - aui;
   const ratio = handwritten / aui;
   const reductionPct = (1 - aui / handwritten) * 100;
@@ -87,7 +97,8 @@ interface ScenarioAnalysis {
 }
 
 function analyze(scenario: GalleryScenario): ScenarioAnalysis {
-  const react = compileReact(parse(scenario.auiCode));
+  const result = compile(scenario.auiCode, { registry: WWW_REGISTRY, strict: true });
+  const react = result.code ?? '';
   return {
     scenario,
     react,
@@ -129,6 +140,7 @@ function ScenarioCard({ analysis, onOpen }: { analysis: ScenarioAnalysis; onOpen
 }
 
 function MethodTable() {
+  const totals = TOKEN_REPORT.totals[PRIMARY];
   return (
     <div className="method-table-wrap">
       <table className="method-table">
@@ -143,25 +155,28 @@ function MethodTable() {
           </tr>
         </thead>
         <tbody>
-          {TOKEN_REPORT.scenarios.map((s) => (
-            <tr key={s.id}>
-              <td>{s.title}</td>
-              <td>{formatTokens(s.aui)}</td>
-              <td>{formatTokens(s.generated)}</td>
-              <td>{formatTokens(s.handwritten)}</td>
-              <td>{formatTokens(s.handwritten - s.aui)}</td>
-              <td>{(s.handwritten / s.aui).toFixed(1)}×</td>
-            </tr>
-          ))}
+          {TOKEN_REPORT.scenarios.map((s) => {
+            const t = s.tokenizers[PRIMARY];
+            return (
+              <tr key={s.id}>
+                <td>{s.title}</td>
+                <td>{formatTokens(t.aui)}</td>
+                <td>{formatTokens(t.generated)}</td>
+                <td>{formatTokens(t.handwritten)}</td>
+                <td>{formatTokens(t.handwritten - t.aui)}</td>
+                <td>{(t.handwritten / t.aui).toFixed(1)}×</td>
+              </tr>
+            );
+          })}
         </tbody>
         <tfoot>
           <tr>
             <td>Total</td>
-            <td>{formatTokens(TOKEN_REPORT.totals.aui)}</td>
-            <td>{formatTokens(TOKEN_REPORT.totals.generated)}</td>
-            <td>{formatTokens(TOKEN_REPORT.totals.handwritten)}</td>
-            <td>{formatTokens(TOKEN_REPORT.totals.handwritten - TOKEN_REPORT.totals.aui)}</td>
-            <td>{(TOKEN_REPORT.totals.handwritten / TOKEN_REPORT.totals.aui).toFixed(1)}×</td>
+            <td>{formatTokens(totals.aui)}</td>
+            <td>{formatTokens(totals.generated)}</td>
+            <td>{formatTokens(totals.handwritten)}</td>
+            <td>{formatTokens(totals.handwritten - totals.aui)}</td>
+            <td>{(totals.handwritten / totals.aui).toFixed(1)}×</td>
           </tr>
         </tfoot>
       </table>
@@ -171,8 +186,9 @@ function MethodTable() {
 
 export function Examples({ onOpenInPlayground }: { onOpenInPlayground: (code: string) => void }) {
   const analyses = useMemo(() => GALLERY.map(analyze), []);
-  const totals = TOKEN_REPORT.totals;
+  const totals = TOKEN_REPORT.totals[PRIMARY];
   const saved = totals.handwritten - totals.aui;
+  const cold = TOKEN_REPORT.instructionOverhead?.cold?.[PRIMARY] ?? 0;
 
   return (
     <Section
@@ -206,9 +222,10 @@ export function Examples({ onOpenInPlayground }: { onOpenInPlayground: (code: st
         <h3>How we measure tokens</h3>
         <ol className="method-list">
           <li>
-            <strong>Tokenizer.</strong> Every count uses <code>gpt-tokenizer</code> — the real GPT-4 / GPT-3.5 BPE
-            tokenizer (cl100k_base), the same one OpenAI's API uses. Every character counts: imports, whitespace,
-            JSX punctuation. Nothing is minified or abbreviated.
+            <strong>Tokenizer.</strong> Every count uses <code>gpt-tokenizer</code> with explicitly pinned encodings —
+            <code>o200k_base</code> (the current OpenAI family) as the primary number shown here, and
+            <code>cl100k_base</code> (legacy GPT-3.5/GPT-4) reported alongside. Both are named in
+            <code>token-report.json</code>; nothing is approximated.
           </li>
           <li>
             <strong>The .aui side</strong> is the exact <code>screen.aui</code> source shown in each card — what an
@@ -224,6 +241,12 @@ export function Examples({ onOpenInPlayground }: { onOpenInPlayground: (code: st
             or smaller.
           </li>
           <li>
+            <strong>Functional equivalence.</strong> Every scenario declares a machine-readable feature contract
+            (rendered nodes, bindings, actions, events). The validator fails if a declared feature is missing from
+            either implementation — so <code>.aui</code> is only ever compared against React that behaves the same
+            way (the form scenario's <code>change=</code> events match real <code>onChange</code> handlers).
+          </li>
+          <li>
             <strong>Fairness.</strong> The screens are identical, data flows through bindings/props rather than
             hard-coded literals, and component definitions are counted on both sides (a <code>def</code> template
             becomes a local React component). Both versions are unminified source, the way an LLM produces and reads
@@ -232,13 +255,24 @@ export function Examples({ onOpenInPlayground }: { onOpenInPlayground: (code: st
           <li>
             <strong>Reproducible.</strong> The numbers on this page come from <code>token-report.json</code>, written
             by <code>scripts/validate-tokens.ts</code>. Run <code>npm run validate:tokens</code> to re-measure
-            everything (parse → compile → count → print → rewrite the report); it exits non-zero if .aui is ever
-            larger than hand-written React. Run <code>npm run validate:tokens --check</code> to verify the committed
-            report is still current.
+            everything (parse → validate → normalize → compile → count → print → rewrite the report); it exits
+            non-zero if .aui is ever larger than functionally equivalent hand-written React, if a declared feature
+            is missing, or if generated TSX fails its syntax gate. Run{' '}
+            <code>npm run validate:tokens --check</code> to verify the committed report is still current.
+          </li>
+          <li>
+            <strong>Instruction overhead.</strong> Teaching a model the AUI grammar costs tokens too: the skill
+            (<code>skills/write-aui-ui/SKILL.md</code>) is {cold.toLocaleString('en-US')} tokens under{' '}
+            <code>{PRIMARY}</code>. Cold-start accounting charges that to every request; warm accounting amortizes it
+            to 0 across a session. The token-reduction numbers above are the warm numbers — the raw output savings
+            of the language itself.
           </li>
         </ol>
 
         <MethodTable />
+        <p className="method-foot">
+          Encodings measured: {Object.entries(TOKEN_REPORT.tokenizers).map(([k, v]) => `${k} (${v})`).join(' · ')}.
+        </p>
 
         <p className="method-foot">
           Same tokenizer, same screens, committed corpus, one command to re-run: the numbers above are the current

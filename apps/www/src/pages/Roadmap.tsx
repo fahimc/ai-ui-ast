@@ -52,10 +52,13 @@ const ACCEPTANCE = [
 ];
 
 const DONE = [
-  'v0 parser: imports, defs, If/Else, bindings, text content — all tested',
-  'Live playground with preview / AST / React tabs and line-numbered diagnostics',
-  'React compiler: named actions, bindings, def templates, third-party imports',
-  'Example gallery with real GPT-4 tokenizer measurements',
+  'v0.2 parser + validator + normalizer: typed values, canonical IR, 79 package tests',
+  'First-class registry (nodes, tokens, events, imports) with registry-only strict mode',
+  'Repairable diagnostics (stable AUI_* codes, line/column, fix hints)',
+  'Compiler with fragments, loop keys, semantic change= events, and a TSX validity gate',
+  'Token methodology rebuilt: pinned encodings, equivalence contracts, cold/warm overhead',
+  'LLM generation benchmark harness with a 36-brief corpus (fixture + opt-in live modes)',
+  'Playground preview renders the same canonical IR the compiler consumes',
 ];
 
 export function Roadmap() {
