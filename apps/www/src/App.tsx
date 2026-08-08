@@ -58,10 +58,12 @@ function App() {
   const [route, setRoute] = useState<Route>(routeFromHash);
   const [sampleId, setSampleId] = useState(DEFAULT_SAMPLE_ID);
   const [customCode, setCustomCode] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const onHash = () => {
       setRoute(routeFromHash());
+      setMenuOpen(false);
       window.scrollTo({ top: 0 });
     };
     window.addEventListener('hashchange', onHash);
@@ -88,7 +90,7 @@ function App() {
         <button type="button" className="nav-brand" onClick={() => go('home')}>
           <Logo />
         </button>
-        <div className="nav-links">
+        <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
           {NAV_LINKS.filter((l) => l.route !== 'home').map((l) => (
             <button
               key={l.route}
@@ -100,6 +102,17 @@ function App() {
             </button>
           ))}
         </div>
+        <button
+          type="button"
+          className={`nav-burger ${menuOpen ? 'open' : ''}`}
+          onClick={() => setMenuOpen((v) => !v)}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
         <button type="button" className="btn btn-primary nav-cta" onClick={() => go('playground')}>
           Open playground
         </button>
