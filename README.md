@@ -10,6 +10,15 @@ boilerplate; the compiler absorbs the messy parts deterministically. The
 token savings are real — and measured, not claimed — but they are a
 consequence of the design, not the identity.
 
+## The core proposition
+
+**The UI tree is the interface.** An LLM writes a small, AST-shaped DSL that
+*is* the tree; a deterministic compiler turns it into production React. The
+messy, error-prone work — imports, JSX, bindings, formatting, framework
+conventions — moves from the model to code, where it is deterministic and
+testable. The model's job shrinks to the one thing it does well: deciding
+what the UI should be.
+
 > **Try the live playground: <https://ai-ui-ast.netlify.app>**
 >
 > **npm: [`@codedia/parser`](https://www.npmjs.com/package/@codedia/parser)**
