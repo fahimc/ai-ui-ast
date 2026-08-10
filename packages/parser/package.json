@@ -1,6 +1,6 @@
 {
   "name": "@codedia/parser",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "An LLM-first, validated UI language with a deterministic compiler: express screens in .aui, get validated canonical IR and readable React/TSX. Small grammar, host-owned registry, measured token savings.",
   "type": "module",
   "main": "./dist/index.js",

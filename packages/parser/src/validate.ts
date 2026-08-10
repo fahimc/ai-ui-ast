@@ -57,6 +57,14 @@ export function isValidIdentifier(name: string): boolean {
   return IDENTIFIER_RE.test(name);
 }
 
+/** UTF-8 byte length that works in Node and browsers (Buffer is Node-only). */
+function utf8ByteLength(input: string): number {
+  if (typeof Buffer !== 'undefined' && typeof Buffer.byteLength === 'function') {
+    return Buffer.byteLength(input, 'utf8');
+  }
+  return new TextEncoder().encode(input).length;
+}
+
 function valueText(v: RawValue): string {
   switch (v.kind) {
     case 'string':
@@ -84,7 +92,7 @@ export function validate(input: string, options: ValidateOptions = {}): Diagnost
   const diags: Diagnostic[] = [];
 
   // ── Resource limits (fail fast, before any deeper walk) ───────────────
-  const bytes = Buffer.byteLength(input, 'utf8');
+  const bytes = utf8ByteLength(input);
   if (bytes > limits.maxSourceBytes) {
     diags.push(
       error(DiagnosticCode.SOURCE_TOO_LARGE, `Source is ${bytes} bytes; the limit is ${limits.maxSourceBytes}.`, 1, undefined, 'Reduce the source size.'),
